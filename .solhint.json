@@ -1,0 +1,9 @@
+{
+  "extends": "solhint:default",
+  "plugins": ["prettier"],
+  "rules": {
+    "prettier/prettier": "error",
+    "not-rely-on-time": "off",
+    "max-line-length": ["error", 100]
+  }
+}

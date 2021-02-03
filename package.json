@@ -1,0 +1,14 @@
+{
+  "name": "ghost",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:thegostep/ghost.git",
+  "author": "thegostep @thegostep",
+  "license": "MIT",
+  "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.0.1",
+    "@nomiclabs/hardhat-etherscan": "^2.1.1",
+    "ethers": "^5.0.28",
+    "hardhat": "^2.0.8"
+  }
+}
