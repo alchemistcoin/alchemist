@@ -9,31 +9,37 @@ import {ERC20Burnable} from "@openzeppelin/contracts/token/ERC20/ERC20Burnable.s
 // todo: make inflation continuous
 // todo: use unicode symbol ♾️
 contract Long is ERC20("Long", "unicode"), ERC20Burnable {
-    address public immutable distributor;
+    /* storage */
+
+    address public immutable tokenManager;
     uint256 public immutable inflationPts;
     uint256 public immutable epochLength;
     uint256 public epochStart;
 
+    /* constructor function */
+
     constructor(
-        address _distributor,
+        address _tokenManager,
         uint256 _supply,
         uint256 _inflationPts,
         uint256 _epochLength
     ) {
         // set immutables
-        distributor = _distributor;
+        tokenManager = _tokenManager;
         inflationPts = _inflationPts;
         epochLength = _epochLength;
         // mint initial supply
-        ERC20._mint(_distributor, _supply);
+        ERC20._mint(_tokenManager, _supply);
     }
+
+    /* user functions */
 
     function advance() external {
         // require new epoch
         require(block.timestamp >= epochStart + epochLength, "Long: not ready to advance");
         // calculate inflation amount
         uint256 amount = (ERC20.totalSupply() * inflationPts) / 10000;
-        // mint to distributor
-        ERC20._mint(distributor, amount);
+        // mint to tokenManager
+        ERC20._mint(tokenManager, amount);
     }
 }

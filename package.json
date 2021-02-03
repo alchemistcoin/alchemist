@@ -9,6 +9,7 @@
     "@nomiclabs/hardhat-ethers": "^2.0.1",
     "@nomiclabs/hardhat-etherscan": "^2.1.1",
     "@openzeppelin/contracts": "^3.4.0-solc-0.7",
+    "@uniswap/lib": "^4.0.1-alpha",
     "ethers": "^5.0.28",
     "hardhat": "^2.0.8",
     "prettier": "^2.2.1",
