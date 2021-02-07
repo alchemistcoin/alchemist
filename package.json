@@ -8,8 +8,12 @@
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.1",
     "@nomiclabs/hardhat-etherscan": "^2.1.1",
+    "@nomiclabs/hardhat-waffle": "^2.0.1",
     "@openzeppelin/contracts": "^3.4.0-solc-0.7",
+    "@types/chai": "^4.2.14",
     "@uniswap/lib": "^4.0.1-alpha",
+    "chai": "^4.3.0",
+    "ethereum-waffle": "^3.2.2",
     "ethers": "^5.0.28",
     "hardhat": "^2.0.8",
     "prettier": "^2.2.1",

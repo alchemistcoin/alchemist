@@ -2,10 +2,8 @@
 pragma solidity 0.7.6;
 // pragma experimental SMTChecker;
 
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {TransferHelper} from "@uniswap/lib/contracts/libraries/TransferHelper.sol";
-
 
 contract TokenManager is Ownable {
     /* receive function */
