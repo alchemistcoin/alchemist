@@ -1,8 +1,6 @@
-# alchemy ⚗️
+# alchemist ⚗️
 
-Lets have a bit of fun.
-
-Intruducing Alchemy coin $⚗️
+Introducing Alchemist Coin $⚗️
 
 ⚗️'s one and only purpose is to find the philosopher's stone and use it to explore the galaxy.
 
