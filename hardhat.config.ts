@@ -2,6 +2,7 @@ import '@nomiclabs/hardhat-ethers'
 import '@nomiclabs/hardhat-etherscan'
 import '@nomiclabs/hardhat-waffle'
 import './tasks/deploy'
+import './tasks/status'
 
 import { Wallet } from 'ethers'
 import { HardhatUserConfig } from 'hardhat/config'
