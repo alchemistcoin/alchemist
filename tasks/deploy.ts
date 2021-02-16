@@ -99,7 +99,7 @@ task('deploy', 'deploy token contracts')
         })
         await run('verify:verify', {
           address: alchemist.address,
-          constructorArguments: [...tokenArgs],
+          constructorArguments: tokenArgs,
         })
       }
     },
