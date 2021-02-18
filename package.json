@@ -5,6 +5,14 @@
   "repository": "git@github.com:alchemistcoin/alchemist.git",
   "author": "thegostep @thegostep",
   "license": "MIT",
+  "scripts": {
+    "compile": "yarn hardhat compile",
+    "test": "yarn hardhat test",
+    "profile": "REPORT_GAS=true yarn hardhat test",
+    "coverage": "yarn hardhat coverage",
+    "format": "yarn prettier --config .prettierrc --write '**/*.ts' 'contracts/**/*.sol'",
+    "lint": "yarn solhint 'contracts/**/*.sol'"
+  },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.1",
     "@nomiclabs/hardhat-etherscan": "^2.1.1",
@@ -12,11 +20,12 @@
     "@openzeppelin/contracts": "^3.4.0-solc-0.7",
     "@types/chai": "^4.2.14",
     "@uniswap/lib": "^4.0.1-alpha",
+    "@uniswap/v2-core": "^1.0.1",
     "chai": "^4.3.0",
     "dayjs": "^1.10.4",
     "ethereum-waffle": "^3.2.2",
     "ethers": "^5.0.28",
-    "hardhat": "^2.0.8",
+    "hardhat": "^2.0.10",
     "prettier": "^2.2.1",
     "prettier-plugin-solidity": "^1.0.0-beta.3",
     "solhint": "^3.3.2",
