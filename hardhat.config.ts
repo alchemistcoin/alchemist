@@ -9,37 +9,46 @@ import './tasks/aludel'
 import './tasks/uniswap'
 import './tasks/mock'
 import './tasks/transmuter'
+import './tasks/wallet'
 
-import { Wallet } from 'ethers'
 import { HardhatUserConfig } from 'hardhat/config'
 import { parseUnits } from 'ethers/lib/utils'
+
+require('dotenv').config()
+
+const mnemonic = process.env.DEV_MNEMONIC || ''
+const archive_node = process.env.ETHEREUM_ARCHIVE_URL || ''
 
 export default {
   networks: {
     hardhat: {
       allowUnlimitedContractSize: true,
       forking: {
-        url: process.env.ETHEREUM_ARCHIVE_URL,
+        url: archive_node,
       },
       accounts: {
-        mnemonic:
-          process.env.DEV_MNEMONIC || Wallet.createRandom().mnemonic.phrase,
+        mnemonic,
       },
     },
     goerli: {
       url: 'https://goerli.infura.io/v3/' + process.env.INFURA_ID,
       accounts: {
-        mnemonic:
-          process.env.DEV_MNEMONIC || Wallet.createRandom().mnemonic.phrase,
+        mnemonic,
       },
     },
     mainnet: {
       url: 'https://mainnet.infura.io/v3/' + process.env.INFURA_ID,
       accounts: {
-        mnemonic:
-          process.env.DEV_MNEMONIC || Wallet.createRandom().mnemonic.phrase,
+        mnemonic,
       },
       gasPrice: parseUnits('130', 'gwei').toNumber(),
+    },
+    alchemist: {
+      url:
+        'https://eth-mainnet.gateway.pokt.network/v1/5f3453978e354ab992c4da79',
+      accounts: {
+        mnemonic,
+      },
     },
   },
   solidity: {
