@@ -71,11 +71,19 @@ task('status', 'Check Alchemist system status').setAction(
 
 task('balance', 'Check signer balance')
   .addOptionalPositionalParam('token', 'token address')
-  .setAction(async (args, { ethers }) => {
+  .setAction(async (args, { ethers, run }) => {
+    // compile
+
+    await run('compile')
+
+    // get signer
     const signer = (await ethers.getSigners())[0]
     console.log('Signer')
     console.log('  at  ', signer.address)
     console.log('  ETH ', formatEther(await signer.getBalance()))
+
+    // log token balance
+
     if (args.token) {
       const token = await ethers.getContractAt(
         'IERC20Detailed',
