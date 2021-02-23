@@ -8,7 +8,7 @@ Can a meme coin help us achieve immortality?
 
 Only one way to find out...
 
-https://etherscan.io/token/0x88acdd2a6425c3faae4bc9650fd7e27e0bebb7ab
+[alchemistcoin.eth](https://etherscan.io/token/0x88acdd2a6425c3faae4bc9650fd7e27e0bebb7ab)
 
 Facts 🧝🏽‍♀️
 
@@ -31,6 +31,10 @@ Long Term 🪐
 
 u in ?
 
+## Community
+Voting: https://cast.alchemist.wtf/#/  
+Discord: https://discord.gg/UQB4MwG4c8
+
 ## Addresses
 
 | Contract           | Address                                                                                                               | Description                              |
@@ -38,7 +42,7 @@ u in ?
 | Alchemist          | [0x88acdd2a6425c3faae4bc9650fd7e27e0bebb7ab](https://etherscan.io/address/0x88acdd2a6425c3faae4bc9650fd7e27e0bebb7ab) | ERC20 token                              |
 | TokenManager       | [0x1c428a75181bc25509af3a5b7faee97b4b6d3562](https://etherscan.io/address/0x1c428a75181bc25509af3a5b7faee97b4b6d3562) | inflation recipient                      |
 | Crucible           | [0x18cc48140cFeC90CEF0035761D56d2d0ff3a110f](https://etherscan.io/address/0x18cc48140cFeC90CEF0035761D56d2d0ff3a110f) | crucible nft template                    |
-| CrucibleFactory    | [0x54e0395CFB4f39beF66DBCd5bD93Cca4E9273D56](https://etherscan.io/address/0x54e0395CFB4f39beF66DBCd5bD93Cca4E9273D56) | crucible nft factory                     |
+| CrucibleFactory    | [crucible.alchemistcoin.eth](https://etherscan.io/address/0x54e0395CFB4f39beF66DBCd5bD93Cca4E9273D56) | crucible nft factory                     |
 | PowerSwitchFactory | [0x89d2D92eaCE71977dD0b159062f8ec90EA64fc24](https://etherscan.io/address/0x89d2D92eaCE71977dD0b159062f8ec90EA64fc24) | factory contract                         |
 | RewardPoolFactory  | [0xF016fa84D5f3a252409a63b5cb89B555A0d27Ccf](https://etherscan.io/address/0xF016fa84D5f3a252409a63b5cb89B555A0d27Ccf) | factory contract                         |
 | UniswapV2Pair      | [0xCD6bcca48069f8588780dFA274960F15685aEe0e](https://etherscan.io/address/0xCD6bcca48069f8588780dFA274960F15685aEe0e) | WETH-⚗️ pair                             |
@@ -55,7 +59,7 @@ Usage: hardhat [GLOBAL OPTIONS] status
 
 ## Mint Crucible and lock in Aludel
 
-Mint Crucible and lock in Aludel.
+Mint Crucible and lock in Aludel. See [tutorial](https://www.notion.so/alchemist-tutorial-5f4f3f5f8b7946f59b3eb1b41a42d129).
 
 ```bash
 Usage: hardhat [GLOBAL OPTIONS] mint-and-lock --aludel <STRING> --amount <STRING> --crucible-factory <STRING> --transmuter <STRING>
