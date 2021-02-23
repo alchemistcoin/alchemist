@@ -32,8 +32,8 @@ Long Term 🪐
 u in ?
 
 ## Community
-Voting: https://cast.alchemist.wtf/#/  
-Discord: https://discord.gg/UQB4MwG4c8
+Voting: https://cast.alchemist.wtf/  
+Discord: http://discord.alchemist.wtf/
 
 ## Addresses
 
