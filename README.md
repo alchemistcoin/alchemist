@@ -45,7 +45,7 @@ Discord: http://discord.alchemist.wtf/
 | CrucibleFactory    | [crucible.alchemistcoin.eth](https://etherscan.io/address/0x54e0395CFB4f39beF66DBCd5bD93Cca4E9273D56) | crucible nft factory                     |
 | PowerSwitchFactory | [0x89d2D92eaCE71977dD0b159062f8ec90EA64fc24](https://etherscan.io/address/0x89d2D92eaCE71977dD0b159062f8ec90EA64fc24) | factory contract                         |
 | RewardPoolFactory  | [0xF016fa84D5f3a252409a63b5cb89B555A0d27Ccf](https://etherscan.io/address/0xF016fa84D5f3a252409a63b5cb89B555A0d27Ccf) | factory contract                         |
-| UniswapV2Pair      | [0xCD6bcca48069f8588780dFA274960F15685aEe0e](https://etherscan.io/address/0xCD6bcca48069f8588780dFA274960F15685aEe0e) | WETH-⚗️ pair                             |
+| UniswapV2Pair      | [0xCD6bcca48069f8588780dFA274960F15685aEe0e](https://etherscan.io/address/0xCD6bcca48069f8588780dFA274960F15685aEe0e) | [WETH-⚗️ pair](https://info.uniswap.org/pair/0xCD6bcca48069f8588780dFA274960F15685aEe0e)                             |
 | Aludel             | [0xf0D415189949d913264A454F57f4279ad66cB24d](https://etherscan.io/address/0xf0D415189949d913264A454F57f4279ad66cB24d) | WETH-⚗️ uniswap reward program           |
 | TransmuterV1       | [0xB772ce9f14FC7C7db0D4525aDb9349FBD7ce456a](https://etherscan.io/address/0xB772ce9f14FC7C7db0D4525aDb9349FBD7ce456a) | router contract for batched transactions |
 
