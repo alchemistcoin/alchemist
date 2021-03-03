@@ -1,8 +1,9 @@
+import IUniswapV2ERC20 from '@uniswap/v2-core/build/IUniswapV2ERC20.json'
 import { expect } from 'chai'
-import { constants } from 'ethers'
+import { constants, Wallet } from 'ethers'
 import { formatEther, parseEther, parseUnits } from 'ethers/lib/utils'
 import { task } from 'hardhat/config'
-import { deployContract } from './utils'
+import { deployContract, signPermission } from './utils'
 
 const DAY = 60 * 60 * 24
 
@@ -189,4 +190,122 @@ task('create-aludel', 'Create an Aludel instance and deposit funds')
         constructorArguments: aludelArgs,
       })
     }
+  })
+
+task('unstake-claim-withdraw', 'Unstake lp tokens, claim reward, and withdraw')
+  .addParam('crucible', 'Crucible vault contract')
+  .addParam('aludel', 'Aludel reward contract')
+  .addParam('recipient', 'Address to receive stake and reward')
+  .addParam('amount', 'Amount of staking tokens with decimals')
+  .addFlag('private', 'Use taichi network to avoid frontrunners')
+  .setAction(async (args, { ethers, run, network }) => {
+    // log config
+
+    console.log('Network')
+    console.log('  ', network.name)
+    console.log('Task Args')
+    console.log(args)
+
+    // compile
+
+    await run('compile')
+
+    // get signer
+
+    let signer = (await ethers.getSigners())[0]
+    console.log('Signer')
+    console.log('  at', signer.address)
+    console.log('  ETH', formatEther(await signer.getBalance()))
+    const signerWallet = Wallet.fromMnemonic(process.env.DEV_MNEMONIC || '')
+    expect(signer.address).to.be.eq(signerWallet.address)
+
+    // fetch contracts
+
+    const aludel = await ethers.getContractAt('Aludel', args.aludel, signer)
+    const stakingToken = await ethers.getContractAt(
+      IUniswapV2ERC20.abi,
+      (await aludel.getAludelData()).stakingToken,
+      signer,
+    )
+    const crucible = await ethers.getContractAt(
+      'Crucible',
+      args.crucible,
+      signer,
+    )
+
+    if (network.name === 'hardhat') {
+      // unlock account and transfer nft
+      const owner = await crucible.owner()
+      await network.provider.request({
+        method: 'hardhat_impersonateAccount',
+        params: [owner],
+      })
+      const fakeSigner = ethers.provider.getSigner(owner)
+      const nft = await ethers.getContractAt(
+        'CrucibleFactory',
+        await crucible.nft(),
+        fakeSigner,
+      )
+
+      await nft.transferFrom(owner, signer.address, crucible.address)
+
+      await network.provider.request({
+        method: 'hardhat_stopImpersonatingAccount',
+        params: [owner],
+      })
+    }
+
+    // declare config
+
+    const amount = parseUnits(args.amount, await stakingToken.decimals())
+    const nonce = await crucible.getNonce()
+    const recipient = args.recipient
+
+    // validate balances
+
+    expect(await stakingToken.balanceOf(crucible.address)).to.be.gte(amount)
+
+    // craft permission
+
+    console.log('Sign Unlock permission')
+
+    const permission = await signPermission(
+      'Unlock',
+      crucible,
+      signerWallet,
+      aludel.address,
+      stakingToken.address,
+      amount,
+      nonce,
+    )
+
+    console.log('Unstake and Claim')
+
+    const unstakeTx = await aludel.unstakeAndClaim(
+      crucible.address,
+      recipient,
+      amount,
+      permission,
+    )
+
+    console.log('  in', unstakeTx.hash)
+
+    console.log('Withdraw from crucible')
+
+    const withdrawPoputatedTx = await crucible.populateTransaction.transferERC20(
+      stakingToken.address,
+      recipient,
+      amount,
+    )
+
+    if (args.private) {
+      const taichi = new ethers.providers.JsonRpcProvider(
+        'https://api.taichi.network:10001/rpc/private',
+        'mainnet',
+      )
+      signer = signer.connect(taichi)
+    }
+
+    const withdrawTx = await signer.sendTransaction(withdrawPoputatedTx)
+    console.log('  in', withdrawTx.hash)
   })
