@@ -50,8 +50,8 @@ task('balance', 'Check wallet balance')
   })
 
 task('recover', 'Drain wallet of tokens or eth')
-  .addPositionalParam('recipient', 'recipient address')
-  .addOptionalPositionalParam('token', 'token address')
+  .addParam('to', 'recipient address')
+  .addOptionalParam('token', 'token address')
   .setAction(async (args, { ethers, run }) => {
     // compile
 
@@ -65,7 +65,8 @@ task('recover', 'Drain wallet of tokens or eth')
 
     // log token balance
 
-    const to = getAddress(args.recipient)
+    // const to = getAddress(args.to)
+    const to = args.to
 
     if (args.token) {
       const token = await ethers.getContractAt(
@@ -200,7 +201,8 @@ task('transfer-nft', 'Transfer NFT')
 
     // prep args
 
-    const to = getAddress(args.to)
+    // const to = getAddress(args.to)
+    const to = args.to
 
     // transfer nft
 

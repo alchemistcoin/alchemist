@@ -1,6 +1,6 @@
 import dayjs from 'dayjs'
 import { BigNumber } from 'ethers'
-import { formatEther, formatUnits, getAddress } from 'ethers/lib/utils'
+import { formatEther, id, verifyMessage } from 'ethers/lib/utils'
 import { task } from 'hardhat/config'
 
 task('status', 'Check Alchemist system status').setAction(
@@ -68,3 +68,25 @@ task('status', 'Check Alchemist system status').setAction(
     )
   },
 )
+
+task('sign', 'Sign message').setAction(async ({}, { ethers }) => {
+  // get signer
+
+  const signer = (await ethers.getSigners())[0]
+  console.log('Signer')
+  console.log('  at           ', signer.address)
+
+  // sign message
+
+  const body = { method: 'eth_sendBundle' }
+  console.log('body', body)
+
+  const msg = id(JSON.stringify(body))
+  console.log('msg', msg)
+
+  const sig = await signer.signMessage(msg)
+  console.log('sig', sig)
+
+  const verify = verifyMessage(msg, sig)
+  console.log('verify', verify)
+})
