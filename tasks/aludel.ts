@@ -292,11 +292,13 @@ task('unstake-claim-withdraw', 'Unstake lp tokens, claim reward, and withdraw')
 
     console.log('Withdraw from crucible')
 
-    const withdrawPoputatedTx = await crucible.populateTransaction.transferERC20(
+    const poputatedTx = await crucible.populateTransaction.transferERC20(
       stakingToken.address,
       recipient,
       amount,
     )
+
+    const signedTx = await signer.signTransaction(poputatedTx)
 
     if (args.private) {
       const taichi = new ethers.providers.JsonRpcProvider(
@@ -306,6 +308,6 @@ task('unstake-claim-withdraw', 'Unstake lp tokens, claim reward, and withdraw')
       signer = signer.connect(taichi)
     }
 
-    const withdrawTx = await signer.sendTransaction(withdrawPoputatedTx)
-    console.log('  in', withdrawTx.hash)
+    const withdrawTx = await signer.provider?.sendTransaction(signedTx)
+    console.log('  in', withdrawTx?.hash)
   })
