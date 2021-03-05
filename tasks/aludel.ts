@@ -192,7 +192,7 @@ task('create-aludel', 'Create an Aludel instance and deposit funds')
     }
   })
 
-task('unstake-claim-withdraw', 'Unstake lp tokens, claim reward, and withdraw')
+task('unstake-and-claim', 'Unstake lp tokens and claim reward')
   .addParam('crucible', 'Crucible vault contract')
   .addParam('aludel', 'Aludel reward contract')
   .addParam('recipient', 'Address to receive stake and reward')
@@ -233,28 +233,6 @@ task('unstake-claim-withdraw', 'Unstake lp tokens, claim reward, and withdraw')
       signer,
     )
 
-    if (network.name === 'hardhat') {
-      // unlock account and transfer nft
-      const owner = await crucible.owner()
-      await network.provider.request({
-        method: 'hardhat_impersonateAccount',
-        params: [owner],
-      })
-      const fakeSigner = ethers.provider.getSigner(owner)
-      const nft = await ethers.getContractAt(
-        'CrucibleFactory',
-        await crucible.nft(),
-        fakeSigner,
-      )
-
-      await nft.transferFrom(owner, signer.address, crucible.address)
-
-      await network.provider.request({
-        method: 'hardhat_stopImpersonatingAccount',
-        params: [owner],
-      })
-    }
-
     // declare config
 
     const amount = parseUnits(args.amount, await stakingToken.decimals())
@@ -281,33 +259,47 @@ task('unstake-claim-withdraw', 'Unstake lp tokens, claim reward, and withdraw')
 
     console.log('Unstake and Claim')
 
-    const unstakeTx = await aludel.unstakeAndClaim(
+    const populatedTx = await aludel.populateTransaction.unstakeAndClaim(
       crucible.address,
       recipient,
       amount,
       permission,
     )
 
-    console.log('  in', unstakeTx.hash)
+    if (args.private) {
+      const gasPrice = await signer.getGasPrice()
+      const gasLimit = await signer.estimateGas(populatedTx)
+      const nonce = await signer.getTransactionCount()
+      const signerWallet = Wallet.fromMnemonic(
+        process.env.DEV_MNEMONIC || '',
+      ).connect(ethers.provider)
+
+      const signedTx = await signerWallet.signTransaction({
+        ...populatedTx,
+        gasPrice,
+        gasLimit,
+        nonce,
+      })
+
+      const taichi = new ethers.providers.JsonRpcProvider(
+        'https://api.taichi.network:10001/rpc/private',
+        'mainnet',
+      )
+
+      const unstakeTx = await taichi.sendTransaction(signedTx)
+      console.log(`  in https://taichi.network/tx/${unstakeTx.hash}`)
+    } else {
+      const unstakeTx = await signer.sendTransaction(populatedTx)
+      console.log('  in', unstakeTx.hash)
+    }
 
     console.log('Withdraw from crucible')
 
-    const poputatedTx = await crucible.populateTransaction.transferERC20(
+    const withdrawTx = await crucible.transferERC20(
       stakingToken.address,
       recipient,
       amount,
     )
 
-    const signedTx = await signer.signTransaction(poputatedTx)
-
-    if (args.private) {
-      const taichi = new ethers.providers.JsonRpcProvider(
-        'https://api.taichi.network:10001/rpc/private',
-        'mainnet',
-      )
-      signer = signer.connect(taichi)
-    }
-
-    const withdrawTx = await signer.provider?.sendTransaction(signedTx)
     console.log('  in', withdrawTx?.hash)
   })

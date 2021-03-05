@@ -60,7 +60,7 @@ Usage: hardhat [GLOBAL OPTIONS] status
 
 ## Mint Crucible and stake LP tokens in Aludel
 
-Mint Crucible and lock in Aludel. See [tutorial](https://www.notion.so/alchemist-tutorial-5f4f3f5f8b7946f59b3eb1b41a42d129).
+See [tutorial](https://www.notion.so/alchemist-tutorial-5f4f3f5f8b7946f59b3eb1b41a42d129).
 
 ```bash
 Usage: hardhat [GLOBAL OPTIONS] mint-and-lock --aludel <STRING> --amount <STRING> --crucible-factory <STRING> --transmuter <STRING>
@@ -73,12 +73,12 @@ OPTIONS:
   --transmuter          TransmuterV1 contract
 ```
 
-## Unstake LP tokens, claim reward, and transfer
+## Unstake LP tokens and claim reward from aludel
 
-Unstake lp tokens, claim reward, and withdraw. Note: use the `--private` flag to avoid frontrunning bots.
+Note: use the `--private` flag to avoid frontrunning bots.
 
 ```bash
-Usage: hardhat [GLOBAL OPTIONS] unstake-claim-withdraw --aludel <STRING> --amount <STRING> --crucible <STRING> [--private] --recipient <STRING>
+Usage: hardhat [GLOBAL OPTIONS] unstake-and-claim --aludel <STRING> --amount <STRING> --crucible <STRING> [--private] --recipient <STRING>
 
 OPTIONS:
 
@@ -87,4 +87,17 @@ OPTIONS:
   --crucible    Crucible vault contract
   --private     Use taichi network to avoid frontrunners
   --recipient   Address to receive stake and reward
+```
+
+## Withdraw ERC20 token from crucible
+
+```bash
+Usage: hardhat [GLOBAL OPTIONS] crucible-withdraw --amount <STRING> --crucible <STRING> --recipient <STRING> --token <STRING>
+
+OPTIONS:
+
+  --amount      Amount of staking tokens with decimals
+  --crucible    Crucible vault contract
+  --recipient   Address to receive stake and reward
+  --token       Token contract
 ```

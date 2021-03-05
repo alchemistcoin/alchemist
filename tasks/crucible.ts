@@ -1,4 +1,6 @@
-import { formatEther } from 'ethers/lib/utils'
+import { expect } from 'chai'
+import { Wallet } from 'ethers'
+import { formatEther, parseUnits } from 'ethers/lib/utils'
 import { task } from 'hardhat/config'
 import { deployContract } from './utils'
 
@@ -115,4 +117,65 @@ task('mint-crucible', 'Mint a Crucible instance')
     console.log('Transfer ownership')
     console.log('  to', args.owner)
     console.log('  in', transferTx.hash)
+  })
+
+task('crucible-withdraw', 'Withdraw tokens from crucible')
+  .addParam('token', 'Token contract')
+  .addParam('crucible', 'Crucible vault contract')
+  .addParam('recipient', 'Address to receive stake and reward')
+  .addParam('amount', 'Amount of staking tokens with decimals')
+  .setAction(async (args, { ethers, run, network }) => {
+    // log config
+
+    console.log('Network')
+    console.log('  ', network.name)
+    console.log('Task Args')
+    console.log(args)
+
+    // compile
+
+    await run('compile')
+
+    // get signer
+
+    let signer = (await ethers.getSigners())[0]
+    console.log('Signer')
+    console.log('  at', signer.address)
+    console.log('  ETH', formatEther(await signer.getBalance()))
+    const signerWallet = Wallet.fromMnemonic(process.env.DEV_MNEMONIC || '')
+    expect(signer.address).to.be.eq(signerWallet.address)
+
+    // fetch contracts
+
+    const token = await ethers.getContractAt(
+      'IERC20Detailed',
+      args.token,
+      signer,
+    )
+    const crucible = await ethers.getContractAt(
+      'Crucible',
+      args.crucible,
+      signer,
+    )
+
+    // declare config
+
+    const amount = parseUnits(args.amount, await token.decimals())
+    const recipient = args.recipient
+
+    // validate balances
+
+    const balance = await token.balanceOf(crucible.address)
+    const lock = await crucible.getBalanceLocked(token.address)
+    expect(balance.sub(lock)).to.be.gte(amount)
+
+    console.log('Withdraw from crucible')
+
+    const withdrawTx = await crucible.transferERC20(
+      token.address,
+      recipient,
+      amount,
+    )
+
+    console.log('  in', withdrawTx.hash)
   })
