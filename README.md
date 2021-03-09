@@ -34,7 +34,7 @@ u in ?
 ## Community
 
 Voting: https://cast.alchemist.wtf/  
-Discord: http://discord.alchemist.wtf/
+Discord: http://discord.alchemist.wtf/  
 FAQ: https://hackmd.io/@thegostep/⚗️
 
 ## Addresses
