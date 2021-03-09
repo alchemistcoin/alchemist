@@ -38,17 +38,17 @@ Discord: http://discord.alchemist.wtf/
 
 ## Addresses
 
-| Contract           | Address                                                                                                               | Description                                                                              |
-| ------------------ | --------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| Alchemist          | [0x88acdd2a6425c3faae4bc9650fd7e27e0bebb7ab](https://etherscan.io/address/0x88acdd2a6425c3faae4bc9650fd7e27e0bebb7ab) | ERC20 token                                                                              |
-| TokenManager       | [0x1c428a75181bc25509af3a5b7faee97b4b6d3562](https://etherscan.io/address/0x1c428a75181bc25509af3a5b7faee97b4b6d3562) | inflation recipient                                                                      |
-| Crucible           | [0x18cc48140cFeC90CEF0035761D56d2d0ff3a110f](https://etherscan.io/address/0x18cc48140cFeC90CEF0035761D56d2d0ff3a110f) | crucible nft template                                                                    |
-| CrucibleFactory    | [crucible.alchemistcoin.eth](https://etherscan.io/address/0x54e0395CFB4f39beF66DBCd5bD93Cca4E9273D56)                 | crucible nft factory                                                                     |
-| PowerSwitchFactory | [0x89d2D92eaCE71977dD0b159062f8ec90EA64fc24](https://etherscan.io/address/0x89d2D92eaCE71977dD0b159062f8ec90EA64fc24) | factory contract                                                                         |
-| RewardPoolFactory  | [0xF016fa84D5f3a252409a63b5cb89B555A0d27Ccf](https://etherscan.io/address/0xF016fa84D5f3a252409a63b5cb89B555A0d27Ccf) | factory contract                                                                         |
-| UniswapV2Pair      | [0xCD6bcca48069f8588780dFA274960F15685aEe0e](https://etherscan.io/address/0xCD6bcca48069f8588780dFA274960F15685aEe0e) | [WETH-⚗️ pair](https://info.uniswap.org/pair/0xCD6bcca48069f8588780dFA274960F15685aEe0e) |
-| Aludel             | [0xf0D415189949d913264A454F57f4279ad66cB24d](https://etherscan.io/address/0xf0D415189949d913264A454F57f4279ad66cB24d) | WETH-⚗️ uniswap reward program                                                           |
-| TransmuterV1       | [0xB772ce9f14FC7C7db0D4525aDb9349FBD7ce456a](https://etherscan.io/address/0xB772ce9f14FC7C7db0D4525aDb9349FBD7ce456a) | router contract for batched transactions                                                 |
+| Contract           | Address                                                                                                               | Description                                                                                      |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| Alchemist          | [alchemistcoin.eth](https://etherscan.io/address/alchemistcoin.eth)                                                   | ERC20 token                                                                                      |
+| Crucible NFT       | [crucible.alchemistcoin.eth](https://etherscan.io/address/crucible.alchemistcoin.eth)                                 | crucible nft contract                                                                            |
+| Aludel             | [aludel.alchemistcoin.eth](https://etherscan.io/address/aludel.alchemistcoin.eth)                                     | ⚗️/WETH uniswap LP reward program                                                                |
+| UniswapV2Pair      | [uniswap.alchemistcoin.eth](https://etherscan.io/address/uniswap.alchemistcoin.eth)                                   | [⚗️/WETH uniswap pair](https://info.uniswap.org/pair/0xCD6bcca48069f8588780dFA274960F15685aEe0e) |
+| TransmuterV1       | [transmuter.alchemistcoin.eth](https://etherscan.io/address/transmuter.alchemistcoin.eth)                             | router contract for batched transactions                                                         |
+| TokenManager       | [0x1c428a75181bc25509af3a5b7faee97b4b6d3562](https://etherscan.io/address/0x1c428a75181bc25509af3a5b7faee97b4b6d3562) | inflation recipient                                                                              |
+| Crucible Template  | [0x18cc48140cFeC90CEF0035761D56d2d0ff3a110f](https://etherscan.io/address/0x18cc48140cFeC90CEF0035761D56d2d0ff3a110f) | crucible nft template                                                                            |
+| PowerSwitchFactory | [0x89d2D92eaCE71977dD0b159062f8ec90EA64fc24](https://etherscan.io/address/0x89d2D92eaCE71977dD0b159062f8ec90EA64fc24) | factory contract                                                                                 |
+| RewardPoolFactory  | [0xF016fa84D5f3a252409a63b5cb89B555A0d27Ccf](https://etherscan.io/address/0xF016fa84D5f3a252409a63b5cb89B555A0d27Ccf) | factory contract                                                                                 |
 
 ## Check system status
 
