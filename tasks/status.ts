@@ -1,28 +1,20 @@
+import IUniswapV2Pair from '@uniswap/v2-core/build/IUniswapV2Pair.json'
 import dayjs from 'dayjs'
 import { BigNumber } from 'ethers'
-import { formatEther, id, verifyMessage } from 'ethers/lib/utils'
+import { formatEther } from 'ethers/lib/utils'
 import { task } from 'hardhat/config'
 
 task('status', 'Check Alchemist system status').setAction(
   async ({}, { ethers }) => {
-    // get signer
-
-    const signer = (await ethers.getSigners())[0]
-    console.log('Signer')
-    console.log('  at           ', signer.address)
-    console.log('  ETH          ', formatEther(await signer.getBalance()))
-
-    // fetch contracts
-
     const alchemist = await ethers.getContractAt(
       'Alchemist',
       'alchemistcoin.eth',
-      signer,
     )
     console.log('Alchemist ⚗️')
     console.log('  at           ', alchemist.address)
     console.log('  admin        ', await alchemist.getAdmin())
     console.log('  recipient    ', await alchemist.getRecipient())
+    console.log('  total supply ', formatEther(await alchemist.totalSupply()))
     console.log('  timelock     ', (await alchemist.getTimelock()).toNumber())
     const epochDuration = await alchemist.getEpochDuration()
     console.log('  epochDuration', epochDuration.toNumber())
@@ -53,7 +45,6 @@ task('status', 'Check Alchemist system status').setAction(
     const tokenManager = await ethers.getContractAt(
       'TokenManager',
       await alchemist.getRecipient(),
-      signer,
     )
     console.log('TokenManager')
     console.log('  at           ', tokenManager.address)
@@ -66,27 +57,19 @@ task('status', 'Check Alchemist system status').setAction(
       '  ETH          ',
       formatEther(await tokenManager.provider.getBalance(tokenManager.address)),
     )
+
+    const uniPair = await ethers.getContractAt(
+      IUniswapV2Pair.abi,
+      '0xcd6bcca48069f8588780dfa274960f15685aee0e',
+    )
+    const reserves = await uniPair.getReserves()
+    const totalSupply = await alchemist.totalSupply()
+
+    console.log('Uniswap Pair')
+    console.log('  at           ', uniPair.address)
+    console.log('  ⚗️            ', formatEther(reserves[0]))
+    console.log('  ETH          ', formatEther(reserves[1]))
+    console.log('  ETH/⚗️        ', reserves[1] / reserves[0])
+    console.log('  ⚗️ supply %   ', (reserves[0] / totalSupply) * 100)
   },
 )
-
-task('sign', 'Sign message').setAction(async ({}, { ethers }) => {
-  // get signer
-
-  const signer = (await ethers.getSigners())[0]
-  console.log('Signer')
-  console.log('  at           ', signer.address)
-
-  // sign message
-
-  const body = { method: 'eth_sendBundle' }
-  console.log('body', body)
-
-  const msg = id(JSON.stringify(body))
-  console.log('msg', msg)
-
-  const sig = await signer.signMessage(msg)
-  console.log('sig', sig)
-
-  const verify = verifyMessage(msg, sig)
-  console.log('verify', verify)
-})
