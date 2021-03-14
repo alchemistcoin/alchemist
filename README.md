@@ -35,9 +35,13 @@ u in ?
 
 Voting: https://cast.alchemist.wtf/  
 Discord: http://discord.alchemist.wtf/  
-FAQ: https://hackmd.io/@thegostep/⚗️
+FAQ: https://hackmd.io/@thegostep/⚗️  
+Community-github: https://github.com/alchemist-community  
+Community-frontend: https://alchemist.farm  
 
 ## Addresses
+
+The Crucible NFT and Aludel LP reward contracts are forks of [Ampleforth](https://github.com/ampleforth)'s upcoming token geyser v2 and UniversalVault NFT contracts. This is a test in prod. *Use at your own risk.*
 
 | Contract           | Address                                                                                                               | Description                                                                                      |
 | ------------------ | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
