@@ -1,11 +1,13 @@
+import { getContractAt } from '@nomiclabs/hardhat-ethers/dist/src/helpers'
 import IUniswapV2Pair from '@uniswap/v2-core/build/IUniswapV2Pair.json'
 import dayjs from 'dayjs'
-import { BigNumber } from 'ethers'
+import { BigNumber, utils } from 'ethers'
 import { formatEther } from 'ethers/lib/utils'
 import { task } from 'hardhat/config'
 
-task('status', 'Check Alchemist system status').setAction(
-  async ({}, { ethers }) => {
+task('status', 'Check Alchemist system status')
+  .addFlag('crucible', 'list crucible IDs')
+  .setAction(async (args, { ethers }) => {
     const alchemist = await ethers.getContractAt(
       'Alchemist',
       'alchemistcoin.eth',
@@ -60,7 +62,7 @@ task('status', 'Check Alchemist system status').setAction(
 
     const uniPair = await ethers.getContractAt(
       IUniswapV2Pair.abi,
-      '0xcd6bcca48069f8588780dfa274960f15685aee0e',
+      'uniswap.alchemistcoin.eth',
     )
     const reserves = await uniPair.getReserves()
     const totalSupply = await alchemist.totalSupply()
@@ -71,5 +73,19 @@ task('status', 'Check Alchemist system status').setAction(
     console.log('  ETH          ', formatEther(reserves[1]))
     console.log('  ETH/⚗️        ', reserves[1] / reserves[0])
     console.log('  ⚗️ supply %   ', (reserves[0] / totalSupply) * 100)
-  },
-)
+
+    if (args.crucible) {
+      console.log('Crucible NFTs')
+      const crucible = await ethers.getContractAt(
+        'CrucibleFactory',
+        'crucible.alchemistcoin.eth',
+      )
+      console.log('  at           ', crucible.address)
+      const supply = await crucible.totalSupply()
+      console.log('  supply       ', supply.toNumber())
+      for (let index = 0; index < supply; index++) {
+        const nftID = await crucible.tokenByIndex(index)
+        console.log(`  ${index}-${nftID.toHexString()}-${nftID.toString()}`)
+      }
+    }
+  })
