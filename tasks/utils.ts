@@ -1,6 +1,11 @@
 import { TypedDataField } from '@ethersproject/abstract-signer'
+import { Provider } from '@ethersproject/providers'
 import { BigNumberish, Contract, ContractFactory, Signer, Wallet } from 'ethers'
 import { splitSignature } from 'ethers/lib/utils'
+
+export async function getTimestamp(provider: Provider) {
+  return (await provider.getBlock('latest')).timestamp
+}
 
 export async function deployContract(
   name: string,
