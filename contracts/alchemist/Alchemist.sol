@@ -48,8 +48,8 @@ contract Alchemist is
 
     /* storage */
 
-    uint256 private _epoch;
-    uint256 private _previousEpochTimestamp;
+    uint256 public _epoch;
+    uint256 public _previousEpochTimestamp;
 
     /* constructor function */
 
