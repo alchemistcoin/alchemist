@@ -10,6 +10,7 @@ import './tasks/uniswap'
 import './tasks/mock'
 import './tasks/transmuter'
 import './tasks/wallet'
+import './tasks/stream'
 
 import { HardhatUserConfig } from 'hardhat/config'
 import { parseUnits } from 'ethers/lib/utils'
@@ -41,7 +42,6 @@ export default {
       accounts: {
         mnemonic,
       },
-      gasPrice: parseUnits('130', 'gwei').toNumber(),
     },
     alchemist: {
       url: 'https://cloudflare-eth.com/',
