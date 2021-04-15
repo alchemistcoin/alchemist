@@ -44,7 +44,8 @@ export default {
       },
     },
     alchemist: {
-      url: 'https://cloudflare-eth.com/',
+      url:
+        'https://eth-mainnet.gateway.pokt.network/v1/607839d619a5c80034fba9d8',
       accounts: {
         mnemonic,
       },
