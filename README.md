@@ -35,9 +35,9 @@ u in ?
 
 Voting: https://cast.alchemist.wtf/  
 Discord: http://discord.alchemist.wtf/  
-FAQ: https://hackmd.io/@thegostep/⚗️  
-Community-github: https://github.com/alchemist-community  
-Community-frontend: https://alchemist.farm
+FAQ: https://docs.alchemist.wtf/mist/  
+GitHub: https://github.com/alchemistcoin/crucible-frontend  
+Crucible/Aludel Rewards: https://crucible.alchemist.wtf  
 
 ## Addresses
 
