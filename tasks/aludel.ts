@@ -261,7 +261,6 @@ task('unstake-and-claim', 'Unstake lp tokens and claim reward')
 
     const populatedTx = await aludel.populateTransaction.unstakeAndClaim(
       crucible.address,
-      recipient,
       amount,
       permission,
     )
