@@ -104,7 +104,6 @@ contract TransmuterV1 is ERC721Holder {
     struct UnstakeRequest {
         address aludel;
         address vault;
-        address recipient;
         uint256 amount;
         bytes permission;
     }
@@ -114,7 +113,6 @@ contract TransmuterV1 is ERC721Holder {
             UnstakeRequest calldata request = requests[index];
             IAludel(request.aludel).unstakeAndClaim(
                 request.vault,
-                request.recipient,
                 request.amount,
                 request.permission
             );
