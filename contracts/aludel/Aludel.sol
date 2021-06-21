@@ -31,7 +31,7 @@ interface IAludel is IRageQuit {
 
     event Staked(address vault, uint256 amount);
     event Unstaked(address vault, uint256 amount);
-    event RewardClaimed(address vault, address recipient, address token, uint256 amount);
+    event RewardClaimed(address vault, address token, uint256 amount);
 
     /* data types */
 
@@ -86,7 +86,6 @@ interface IAludel is IRageQuit {
 
     function unstakeAndClaim(
         address vault,
-        address recipient,
         uint256 amount,
         bytes calldata permission
     ) external;
@@ -840,8 +839,7 @@ contract Aludel is IAludel, Powered, Ownable {
     /* user functions */
 
     /// @notice Stake tokens
-    /// @dev anyone can stake to any vault if they have valid permission
-    /// access control: anyone
+    /// access control: anyone with a valid permission
     /// state machine:
     ///   - can be called multiple times
     ///   - only online
@@ -855,6 +853,8 @@ contract Aludel is IAludel, Powered, Ownable {
     /// token transfer: transfer staking tokens from msg.sender to vault
     /// @param vault address The address of the vault to stake from
     /// @param amount uint256 The amount of staking tokens to stake
+    /// @param permission bytes The signed lock permission for the universal vault
+
     function stake(
         address vault,
         uint256 amount,
@@ -893,8 +893,8 @@ contract Aludel is IAludel, Powered, Ownable {
     }
 
     /// @notice Unstake staking tokens and claim reward
-    /// @dev rewards can only be claimed when unstaking
-    /// access control: only owner of vault
+    /// @dev rewards can only be claimed when unstaking, thus reseting the reward multiplier
+    /// access control: anyone with a valid permission
     /// state machine:
     ///   - when vault exists on this Aludel
     ///   - after stake from vault
@@ -908,14 +908,13 @@ contract Aludel is IAludel, Powered, Ownable {
     ///   - modify _vaults[vault].stakes
     ///   - decrease _vaults[vault].totalStake
     /// token transfer:
-    ///   - transfer reward tokens from reward pool to recipient
-    ///   - transfer bonus tokens from reward pool to recipient
+    ///   - transfer reward tokens from reward pool to vault
+    ///   - transfer bonus tokens from reward pool to vault
     /// @param vault address The vault to unstake from
-    /// @param recipient address The recipient to send reward to
     /// @param amount uint256 The amount of staking tokens to unstake
+    /// @param permission bytes The signed lock permission for the universal vault
     function unstakeAndClaim(
         address vault,
-        address recipient,
         uint256 amount,
         bytes calldata permission
     ) external override onlyOnline {
@@ -924,9 +923,6 @@ contract Aludel is IAludel, Powered, Ownable {
 
         // verify non-zero amount
         require(amount != 0, "Aludel: no amount unstaked");
-
-        // validate recipient
-        _validateAddress(recipient);
 
         // check for sufficient vault stake amount
         require(vaultData.totalStake >= amount, "Aludel: insufficient vault stake");
@@ -969,8 +965,12 @@ contract Aludel is IAludel, Powered, Ownable {
             // some stakes have been completely or partially unstaked
             // delete fully unstaked stakes
             while (vaultData.stakes.length > out.newStakesCount) vaultData.stakes.pop();
-            // update partially unstaked stake
-            vaultData.stakes[out.newStakesCount.sub(1)].amount = out.lastStakeAmount;
+
+            // update stake amount when lastStakeAmount is set
+            if (out.lastStakeAmount > 0) {
+                // update partially unstaked stake
+                vaultData.stakes[out.newStakesCount.sub(1)].amount = out.lastStakeAmount;
+            }
         }
 
         // update cached stake totals
@@ -994,7 +994,7 @@ contract Aludel is IAludel, Powered, Ownable {
             // burn claimed shares
             _aludel.rewardSharesOutstanding = _aludel.rewardSharesOutstanding.sub(sharesToBurn);
 
-            // transfer bonus tokens from reward pool to recipient
+            // transfer bonus tokens from reward pool to vault
             if (_bonusTokenSet.length() > 0) {
                 for (uint256 index = 0; index < _bonusTokenSet.length(); index++) {
                     // fetch bonus token address reference
@@ -1008,18 +1008,18 @@ contract Aludel is IAludel, Powered, Ownable {
                         );
 
                     // transfer bonus token
-                    IRewardPool(_aludel.rewardPool).sendERC20(bonusToken, recipient, bonusAmount);
+                    IRewardPool(_aludel.rewardPool).sendERC20(bonusToken, vault, bonusAmount);
 
                     // emit event
-                    emit RewardClaimed(vault, recipient, bonusToken, bonusAmount);
+                    emit RewardClaimed(vault, bonusToken, bonusAmount);
                 }
             }
 
-            // transfer reward tokens from reward pool to recipient
-            IRewardPool(_aludel.rewardPool).sendERC20(_aludel.rewardToken, recipient, out.reward);
+            // transfer reward tokens from reward pool to vault
+            IRewardPool(_aludel.rewardPool).sendERC20(_aludel.rewardToken, vault, out.reward);
 
             // emit event
-            emit RewardClaimed(vault, recipient, _aludel.rewardToken, out.reward);
+            emit RewardClaimed(vault, _aludel.rewardToken, out.reward);
         }
     }
 
