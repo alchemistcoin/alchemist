@@ -38,6 +38,8 @@ Discord: http://discord.alchemist.wtf/
 FAQ: https://docs.alchemist.wtf/mist/  
 GitHub: https://github.com/alchemistcoin/crucible-frontend  
 Crucible/Aludel Rewards: https://crucible.alchemist.wtf  
+MistX FlashDEX: https://mistx.io/
+Copper Fair Launch: https://copperlaunch.com/
 
 ## Addresses
 
@@ -47,7 +49,8 @@ The Crucible NFT and Aludel LP reward contracts are forks of [Ampleforth](https:
 | ------------------ | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
 | Alchemist          | [alchemistcoin.eth](https://etherscan.io/address/alchemistcoin.eth)                                                   | ERC20 token                                                                                      |
 | Crucible NFT       | [crucible.alchemistcoin.eth](https://etherscan.io/address/crucible.alchemistcoin.eth)                                 | crucible nft contract                                                                            |
-| Aludel             | [aludel.alchemistcoin.eth](https://etherscan.io/address/aludel.alchemistcoin.eth)                                     | ⚗️/WETH uniswap LP reward program                                                                |
+| Aludel v1             | [aludel.alchemistcoin.eth](https://etherscan.io/address/aludel.alchemistcoin.eth)                                     | ⚗️/WETH LP (Uniswap v2) reward program                                                                |
+| Aludel v1.5             | [0x93c31fc68E613f9A89114f10B38F9fd2EA5de6BC](https://etherscan.io/address/0x93c31fc68E613f9A89114f10B38F9fd2EA5de6BC)                                     | ⚗️/WETH LP (Uniswap v2) reward program                                                                |
 | Multisig           | [multisig.alchemistcoin.eth](https://etherscan.io/address/multisig.alchemistcoin.eth)                                 | community multisig                                                                               |
 | UniswapV2Pair      | [uniswap.alchemistcoin.eth](https://etherscan.io/address/uniswap.alchemistcoin.eth)                                   | [⚗️/WETH uniswap pair](https://info.uniswap.org/pair/0xCD6bcca48069f8588780dFA274960F15685aEe0e) |
 | TransmuterV1       | [transmuter.alchemistcoin.eth](https://etherscan.io/address/transmuter.alchemistcoin.eth)                             | router contract for batched transactions                                                         |
