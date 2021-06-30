@@ -8,7 +8,7 @@ import {Address} from "@openzeppelin/contracts/utils/Address.sol";
 import {IAlchemist} from "./alchemist/Alchemist.sol";
 import {Aludel} from "./aludel/Aludel.sol";
 
-contract StreamV2 is Ownable {
+contract StreamV1 is Ownable {
     using SafeMath for uint256;
 
     address public immutable mist;
