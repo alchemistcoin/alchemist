@@ -4,7 +4,9 @@ pragma solidity 0.7.6;
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {SafeMath} from "@openzeppelin/contracts/math/SafeMath.sol";
+import {Address} from "@openzeppelin/contracts/utils/Address.sol";
 import {IAlchemist} from "./alchemist/Alchemist.sol";
+import {Aludel} from "./aludel/Aludel.sol";
 
 contract StreamV1 is Ownable {
     using SafeMath for uint256;
@@ -13,9 +15,21 @@ contract StreamV1 is Ownable {
 
     address[] public recipients;
     uint256[] public shareBPS;
+    uint256[] public fundDuration;
 
     event Distributed(uint256 amtMinted);
-    event RecipientsUpdated(address[] _recipients, uint256[] _shareBPS);
+    event RecipientsUpdated(address[] _recipients, uint256[] _shareBPS, uint256[] _fundDuration);
+    event FunctionCall(address target);
+    event ProgramTransferOwnership(address rewardProgramAddress, address newOwner);
+    event ProgramRescueTokensFromRewardPool(
+        address rewardProgramAddress,
+        address token,
+        address recipient,
+        uint256 amount
+    );
+    event ProgramRemoveVaultFactory(address rewardProgramAddress, address factory);
+    event ProgramRegisterVaultFactory(address rewardProgramAddress, address factory);
+    event ProgramRegisterBonusToken(address rewardProgramAddress, address bonusToken);
 
     constructor(address _mist, address _owner) {
         mist = _mist;
@@ -36,7 +50,31 @@ contract StreamV1 is Ownable {
         uint256 balance = IERC20(mist).balanceOf(address(this));
         // transfer to recipients
         for (uint256 index = 0; index < recipients.length; index++) {
-            IERC20(mist).transfer(recipients[index], balance.mul(shareBPS[index]).div(10_000));
+            // check if a fund duration has been set
+            if (fundDuration[index] > 0) {
+                // check if recipient is a contract
+                if (Address.isContract(recipients[index])) {
+                    // get approval for token transfer
+                    IERC20(mist).approve(
+                        recipients[index],
+                        balance.mul(shareBPS[index]).div(10_000)
+                    );
+                    // call fund function from reward program contract
+                    try
+                        Aludel(recipients[index]).fund(
+                            balance.mul(shareBPS[index]).div(10_000),
+                            fundDuration[index]
+                        )
+                    {} catch {}
+                } else {
+                    IERC20(mist).transfer(
+                        recipients[index],
+                        balance.mul(shareBPS[index]).div(10_000)
+                    );
+                }
+            } else {
+                IERC20(mist).transfer(recipients[index], balance.mul(shareBPS[index]).div(10_000));
+            }
         }
         // emit event
         emit Distributed(balance);
@@ -44,14 +82,17 @@ contract StreamV1 is Ownable {
 
     /* admin functions */
 
-    function updateRecipients(address[] calldata _recipients, uint256[] calldata _shareBPS)
-        external
-        onlyOwner
-    {
+    function updateRecipients(
+        address[] calldata _recipients,
+        uint256[] calldata _shareBPS,
+        uint256[] calldata _fundDuration
+    ) external onlyOwner {
         // clear storage
         delete recipients;
         delete shareBPS;
-        assert(recipients.length == 0 && shareBPS.length == 0);
+        delete fundDuration;
+
+        assert(recipients.length == 0 && shareBPS.length == 0 && fundDuration.length == 0);
         // sumBPS distribution
         uint256 sumBPS = 0;
         for (uint256 index = 0; index < _recipients.length; index++) {
@@ -61,7 +102,59 @@ contract StreamV1 is Ownable {
         // update storage
         recipients = _recipients;
         shareBPS = _shareBPS;
+        fundDuration = _fundDuration;
         // emit event
-        emit RecipientsUpdated(_recipients, _shareBPS);
+        emit RecipientsUpdated(_recipients, _shareBPS, _fundDuration);
+    }
+
+    /* admin functions - reward program */
+
+    function _registerBonusToken(address rewardProgramAddress, address bonusToken)
+        external
+        onlyOwner
+    {
+        Aludel(rewardProgramAddress).registerBonusToken(bonusToken);
+        // emit event
+        emit ProgramRegisterBonusToken(rewardProgramAddress, bonusToken);
+    }
+
+    function _registerVaultFactory(address rewardProgramAddress, address factory)
+        external
+        onlyOwner
+    {
+        Aludel(rewardProgramAddress).registerVaultFactory(factory);
+        // emit event
+        emit ProgramRegisterVaultFactory(rewardProgramAddress, factory);
+    }
+
+    function _removeVaultFactory(address rewardProgramAddress, address factory) external onlyOwner {
+        Aludel(rewardProgramAddress).removeVaultFactory(factory);
+        // emit event
+        emit ProgramRemoveVaultFactory(rewardProgramAddress, factory);
+    }
+
+    function _rescueTokensFromRewardPool(
+        address rewardProgramAddress,
+        address token,
+        address recipient,
+        uint256 amount
+    ) external onlyOwner {
+        Aludel(rewardProgramAddress).rescueTokensFromRewardPool(token, recipient, amount);
+        // emit event
+        emit ProgramRescueTokensFromRewardPool(rewardProgramAddress, token, recipient, amount);
+    }
+
+    function _transferOwnership(address rewardProgramAddress, address newOwner) external onlyOwner {
+        Aludel(rewardProgramAddress).transferOwnership(newOwner);
+        // emit event
+        emit ProgramTransferOwnership(rewardProgramAddress, newOwner);
+    }
+
+    /* admin functions - call forwarding */
+
+    function _functionCall(address target, bytes memory data) external onlyOwner {
+        Address.functionCall(target, data, "external call failed");
+        // emit event
+        emit FunctionCall(target);
     }
 }
