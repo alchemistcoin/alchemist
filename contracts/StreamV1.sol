@@ -19,7 +19,6 @@ contract StreamV1 is Ownable {
 
     event Distributed(uint256 amtMinted);
     event RecipientsUpdated(address[] _recipients, uint256[] _shareBPS, uint256[] _fundDuration);
-    event RewardContractOwnerUpdated(address _contractAddress, address _newOwner);
 
     constructor(address _mist, address _owner) {
         mist = _mist;
