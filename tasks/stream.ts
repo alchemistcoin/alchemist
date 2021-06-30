@@ -1,7 +1,7 @@
 import { task } from 'hardhat/config'
 import { formatEther } from 'ethers/lib/utils'
 
-// example goerli: yarn hardhat deploy-stream --stream-version v1 --token-address 0xdb435816e41eada055750369bc2662efbd465d72 --owner 0x46848C650d6aDb98151DF53CB73F44E2Dd784D92 --network goerli
+// example goerli: yarn hardhat deploy-stream --stream-version V1 --token-address 0xdb435816e41eada055750369bc2662efbd465d72 --owner 0x46848C650d6aDb98151DF53CB73F44E2Dd784D92 --network goerli
 
 task('deploy-stream', 'deploy stream smart contract')
 .addParam('streamVersion', 'the mist token')
