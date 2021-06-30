@@ -114,7 +114,6 @@ contract StreamV1 is Ownable {
         onlyOwner
     {
         Aludel(rewardProgramAddress).registerBonusToken(bonusToken);
-
         // emit event
         emit ProgramRegisterBonusToken(rewardProgramAddress, bonusToken);
     }
@@ -124,14 +123,12 @@ contract StreamV1 is Ownable {
         onlyOwner
     {
         Aludel(rewardProgramAddress).registerVaultFactory(factory);
-
         // emit event
         emit ProgramRegisterVaultFactory(rewardProgramAddress, factory);
     }
 
     function _removeVaultFactory(address rewardProgramAddress, address factory) external onlyOwner {
         Aludel(rewardProgramAddress).removeVaultFactory(factory);
-
         // emit event
         emit ProgramRemoveVaultFactory(rewardProgramAddress, factory);
     }
@@ -143,14 +140,12 @@ contract StreamV1 is Ownable {
         uint256 amount
     ) external onlyOwner {
         Aludel(rewardProgramAddress).rescueTokensFromRewardPool(token, recipient, amount);
-
         // emit event
         emit ProgramRescueTokensFromRewardPool(rewardProgramAddress, token, recipient, amount);
     }
 
     function _transferOwnership(address rewardProgramAddress, address newOwner) external onlyOwner {
         Aludel(rewardProgramAddress).transferOwnership(newOwner);
-
         // emit event
         emit ProgramTransferOwnership(rewardProgramAddress, newOwner);
     }
@@ -159,7 +154,6 @@ contract StreamV1 is Ownable {
 
     function _functionCall(address target, bytes memory data) external onlyOwner {
         Address.functionCall(target, data, "external call failed");
-
         // emit event
         emit FunctionCall(target);
     }
