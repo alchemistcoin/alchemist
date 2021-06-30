@@ -50,7 +50,7 @@ contract StreamV1 is Ownable {
         uint256 balance = IERC20(mist).balanceOf(address(this));
         // transfer to recipients
         for (uint256 index = 0; index < recipients.length; index++) {
-            // check if a fund duration has been set
+            // perform if fund duration is set
             if (fundDuration[index] > 0) {
                 // check if recipient is a contract
                 if (Address.isContract(recipients[index])) {
@@ -59,7 +59,7 @@ contract StreamV1 is Ownable {
                         recipients[index],
                         balance.mul(shareBPS[index]).div(10_000)
                     );
-                    // call fund function from reward program contract
+                    // call fund function directly to reward program contract
                     try
                         Aludel(recipients[index]).fund(
                             balance.mul(shareBPS[index]).div(10_000),
@@ -150,7 +150,7 @@ contract StreamV1 is Ownable {
         emit ProgramTransferOwnership(rewardProgramAddress, newOwner);
     }
 
-    /* admin functions - call forwarding */
+    /* admin functions - arbitrary external call forwarding */
 
     function _functionCall(address target, bytes memory data) external onlyOwner {
         Address.functionCall(target, data, "external call failed");
