@@ -1,10 +1,12 @@
 import { task } from 'hardhat/config'
 import { formatEther } from 'ethers/lib/utils'
 
-// example goerli: yarn hardhat deploy-stream --stream-version V1 --token-address 0xdb435816e41eada055750369bc2662efbd465d72 --owner 0x46848C650d6aDb98151DF53CB73F44E2Dd784D92 --network goerli
+// example goerli: yarn hardhat deploy-stream --stream-version V2 --token-address 0xdb435816e41eada055750369bc2662efbd465d72 --owner 0x46848c650d6adb98151df53cb73f44e2dd784d92 --network goerli
+// example mainnet: yarn hardhat deploy-stream --stream-version V2 --token-address 0x88acdd2a6425c3faae4bc9650fd7e27e0bebb7ab --owner 0x46848c650d6adb98151df53cb73f44e2dd784d92 --network mainnet
+// Important: ensure addresses are lowercase
 
 task('deploy-stream', 'deploy stream smart contract')
-.addParam('streamVersion', 'the mist token')
+.addParam('streamVersion', 'the stream smart contract version')
 .addParam('tokenAddress', 'the mist token')
 .addParam('owner', 'the admin of the stream')
 .setAction(
@@ -28,7 +30,7 @@ task('deploy-stream', 'deploy stream smart contract')
     console.log('  to', contract.address)
     console.log('  in', contract.deployTransaction.hash)
     await contract.deployTransaction.wait()
-    console.log('Constructor arguements')
+    console.log('Constructor arguments')
     console.log(constructorArguments);
     await run('verify:verify', {
       address: contract.address,
