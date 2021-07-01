@@ -39,28 +39,29 @@ FAQ: https://docs.alchemist.wtf/
 GitHub: https://github.com/alchemistcoin/crucible-frontend  
 Crucible/Aludel Rewards: https://crucible.alchemist.wtf  
 MistX FlashDEX: https://mistx.io/  
-Copper Fair Launch: https://copperlaunch.com/  
+Copper Fair Launch: https://copperlaunch.com/
 
 ## Addresses
 
 The Crucible NFT and Aludel LP reward contracts are forks of [Ampleforth](https://github.com/ampleforth)'s upcoming token geyser v2 and UniversalVault NFT contracts. This is a test in prod. _Use at your own risk._
 
-| Contract           | Address                                                                                                               | Description                                                                                      |
-| ------------------ | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| Alchemist          | [alchemistcoin.eth](https://etherscan.io/address/alchemistcoin.eth)                                                   | ERC20 token                                                                                      |
-| Crucible NFT       | [crucible.alchemistcoin.eth](https://etherscan.io/address/crucible.alchemistcoin.eth)                                 | crucible nft contract                                                                            |
-| Aludel v1             | [aludel.alchemistcoin.eth](https://etherscan.io/address/aludel.alchemistcoin.eth)                                     | ⚗️/WETH LP (Uniswap v2) reward program                                                                |
-| Aludel v1.5             | [0x93c31fc68E613f9A89114f10B38F9fd2EA5de6BC](https://etherscan.io/address/0x93c31fc68E613f9A89114f10B38F9fd2EA5de6BC)                                     | ⚗️/WETH LP (Uniswap v2) reward program                                                                |
-| Multisig           | [multisig.alchemistcoin.eth](https://etherscan.io/address/multisig.alchemistcoin.eth)                                 | community multisig                                                                               |
+| Contract           | Address                                                                                                               | Description                                            |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| Alchemist          | [alchemistcoin.eth](https://etherscan.io/address/alchemistcoin.eth)                                                   | ERC20 token                                            |
+| Crucible NFT       | [crucible.alchemistcoin.eth](https://etherscan.io/address/crucible.alchemistcoin.eth)                                 | crucible nft contract                                  |
+| Aludel v1          | [aludel.alchemistcoin.eth](https://etherscan.io/address/aludel.alchemistcoin.eth)                                     | ⚗️/WETH LP (Uniswap v2) reward program                 |
+| Aludel v1.5        | [0x93c31fc68E613f9A89114f10B38F9fd2EA5de6BC](https://etherscan.io/address/0x93c31fc68E613f9A89114f10B38F9fd2EA5de6BC) | ⚗️/WETH LP (Uniswap v2) reward program                 |
+| Multisig           | [multisig.alchemistcoin.eth](https://etherscan.io/address/multisig.alchemistcoin.eth)                                 | community multisig                                     |
 | UniswapV2Pair      | [uniswap.alchemistcoin.eth](https://etherscan.io/address/uniswap.alchemistcoin.eth)                                   | [⚗️/WETH uniswap pair](https://lp.mist.alchemist.wtf/) |
-| TransmuterV1       | [transmuter.alchemistcoin.eth](https://etherscan.io/address/transmuter.alchemistcoin.eth)                             | router contract for batched transactions                                                         |
-| StreamV1           | [0x979e2FdE487534be3f8a41cD57f11EF9E71cDC1A](https://etherscan.io/address/0x979e2FdE487534be3f8a41cD57f11EF9E71cDC1A) | inflation streaming                                                                              |
-| TokenManager       | [0x1c428a75181bc25509af3a5b7faee97b4b6d3562](https://etherscan.io/address/0x1c428a75181bc25509af3a5b7faee97b4b6d3562) | treasury                                                                                         |
-| Crucible Template  | [0x18cc48140cFeC90CEF0035761D56d2d0ff3a110f](https://etherscan.io/address/0x18cc48140cFeC90CEF0035761D56d2d0ff3a110f) | crucible nft template                                                                            |
-| PowerSwitchFactory | [0x89d2D92eaCE71977dD0b159062f8ec90EA64fc24](https://etherscan.io/address/0x89d2D92eaCE71977dD0b159062f8ec90EA64fc24) | factory contract                                                                                 |
-| RewardPoolFactory  | [0xF016fa84D5f3a252409a63b5cb89B555A0d27Ccf](https://etherscan.io/address/0xF016fa84D5f3a252409a63b5cb89B555A0d27Ccf) | factory contract                                                                                 |
-| mistX Tip Jar  | [mistx.eth](https://etherscan.io/address/mistx.eth) | mistX tip jar                                                                                 |
-| MistXRouter  | [0xA58f22e0766B3764376c92915BA545d583c19DBc](https://etherscan.io/address/0xA58f22e0766B3764376c92915BA545d583c19DBc) | mistX transaction router                                                                                 |
+| TransmuterV1       | [transmuter.alchemistcoin.eth](https://etherscan.io/address/transmuter.alchemistcoin.eth)                             | router contract for batched transactions               |
+| StreamV1           | [0x979e2FdE487534be3f8a41cD57f11EF9E71cDC1A](https://etherscan.io/address/0x979e2FdE487534be3f8a41cD57f11EF9E71cDC1A) | inflation streaming                                    |
+| StreamV2           | [0xebf421c83069143f3bd29A5C690Df97CC261E49c](https://etherscan.io/address/0xebf421c83069143f3bd29A5C690Df97CC261E49c) | inflation streaming                                    |
+| TokenManager       | [0x1c428a75181bc25509af3a5b7faee97b4b6d3562](https://etherscan.io/address/0x1c428a75181bc25509af3a5b7faee97b4b6d3562) | treasury                                               |
+| Crucible Template  | [0x18cc48140cFeC90CEF0035761D56d2d0ff3a110f](https://etherscan.io/address/0x18cc48140cFeC90CEF0035761D56d2d0ff3a110f) | crucible nft template                                  |
+| PowerSwitchFactory | [0x89d2D92eaCE71977dD0b159062f8ec90EA64fc24](https://etherscan.io/address/0x89d2D92eaCE71977dD0b159062f8ec90EA64fc24) | factory contract                                       |
+| RewardPoolFactory  | [0xF016fa84D5f3a252409a63b5cb89B555A0d27Ccf](https://etherscan.io/address/0xF016fa84D5f3a252409a63b5cb89B555A0d27Ccf) | factory contract                                       |
+| mistX Tip Jar      | [mistx.eth](https://etherscan.io/address/mistx.eth)                                                                   | mistX tip jar                                          |
+| MistXRouter        | [0xA58f22e0766B3764376c92915BA545d583c19DBc](https://etherscan.io/address/0xA58f22e0766B3764376c92915BA545d583c19DBc) | mistX transaction router                               |
 
 ## Check system status
 
