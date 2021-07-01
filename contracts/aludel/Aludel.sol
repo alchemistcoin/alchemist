@@ -90,6 +90,22 @@ interface IAludel is IRageQuit {
         bytes calldata permission
     ) external;
 
+    /* admin functions */
+
+    function fund(uint256 amount, uint256 duration) external;
+    
+    function registerVaultFactory(address factory) external;
+    
+    function removeVaultFactory(address factory) external;
+    
+    function registerBonusToken(address bonusToken) external;
+
+    function rescueTokensFromRewardPool(
+        address token,
+        address recipient,
+        uint256 amount
+    ) external;
+
     /* getter functions */
 
     function getAludelData() external view returns (AludelData memory aludel);
@@ -191,10 +207,6 @@ interface IAludel is IRageQuit {
 /// - Power controller:
 ///     Can power off / shutdown the Aludel
 ///     Can withdraw rewards from reward pool once shutdown
-/// - Proxy owner:
-///     Can change arbitrary logic / state by upgrading the Aludel
-///     Is unable to operate on user funds due to UniversalVault
-///     Is unable to operate on reward pool funds when reward pool is offline / shutdown
 /// - Aludel admin:
 ///     Can add funds to the Aludel, register bonus tokens, and whitelist new vault factories
 ///     Is a subset of proxy owner permissions
@@ -706,7 +718,7 @@ contract Aludel is IAludel, Powered, Ownable {
     /// token transfer: transfer staking tokens from msg.sender to reward pool
     /// @param amount uint256 Amount of reward tokens to deposit
     /// @param duration uint256 Duration over which to linearly unlock rewards
-    function fund(uint256 amount, uint256 duration) external onlyOwner onlyOnline {
+    function fund(uint256 amount, uint256 duration) external override onlyOwner onlyOnline {
         // validate duration
         require(duration != 0, "Aludel: invalid duration");
 
@@ -754,7 +766,7 @@ contract Aludel is IAludel, Powered, Ownable {
     ///   - append to _vaultFactorySet
     /// token transfer: none
     /// @param factory address The address of the vault factory
-    function registerVaultFactory(address factory) external onlyOwner notShutdown {
+    function registerVaultFactory(address factory) external override onlyOwner notShutdown {
         // add factory to set
         require(_vaultFactorySet.add(factory), "Aludel: vault factory already registered");
 
@@ -774,7 +786,7 @@ contract Aludel is IAludel, Powered, Ownable {
     ///   - remove from _vaultFactorySet
     /// token transfer: none
     /// @param factory address The address of the vault factory
-    function removeVaultFactory(address factory) external onlyOwner notShutdown {
+    function removeVaultFactory(address factory) external override onlyOwner notShutdown {
         // remove factory from set
         require(_vaultFactorySet.remove(factory), "Aludel: vault factory not registered");
 
@@ -792,7 +804,7 @@ contract Aludel is IAludel, Powered, Ownable {
     ///   - append to _bonusTokenSet
     /// token transfer: none
     /// @param bonusToken address The address of the bonus token
-    function registerBonusToken(address bonusToken) external onlyOwner onlyOnline {
+    function registerBonusToken(address bonusToken) external override onlyOwner onlyOnline {
         // verify valid bonus token
         _validateAddress(bonusToken);
 
@@ -822,7 +834,7 @@ contract Aludel is IAludel, Powered, Ownable {
         address token,
         address recipient,
         uint256 amount
-    ) external onlyOwner onlyOnline {
+    ) external override onlyOwner onlyOnline {
         // verify recipient
         _validateAddress(recipient);
 
