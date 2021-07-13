@@ -1,7 +1,11 @@
 import { TypedDataField } from '@ethersproject/abstract-signer'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/dist/src/signer-with-address'
-import { BigNumberish, BytesLike, Contract, Signer, Wallet } from 'ethers'
+import { BigNumber, BigNumberish, BytesLike, Contract, Signer, Wallet } from 'ethers'
 import { ethers, network, upgrades } from 'hardhat'
+import '@openzeppelin/hardhat-upgrades'
+import { parseEther } from 'ethers/lib/utils'
+
+const DAY = 60 * 60 * 24
 
 export async function getTimestamp() {
   return (await ethers.provider.getBlock('latest')).timestamp
@@ -47,12 +51,36 @@ export async function deployAmpl(admin: SignerWithAddress) {
   return { ampl, amplInitialSupply }
 }
 
-export async function deployGeyser(args: Array<any>) {
-  const factory = await ethers.getContractFactory('Geyser')
-  return upgrades.deployProxy(factory, args, {
-    unsafeAllowCustomTypes: true,
-  })
+export async function deployMist(admin: SignerWithAddress) {
+  const factory = await ethers.getContractFactory('Alchemist')
+
+  // todo : use the token manager
+  const tokenManager = await (await ethers.getContractFactory('TokenManager', admin)).deploy()
+
+  const now = new Date()
+  const mist = await factory.deploy(
+    admin.address,
+    admin.address,
+    1000,
+    BigNumber.from(14).mul(DAY),
+    BigNumber.from(60).mul(DAY),
+    parseEther("1000"), //parseEther(1000000*10**18),
+    Math.round(now.getTime() / 1000)
+  )
+
+  await mist.connect(admin)
+  const initialSupply = await mist.balanceOf(admin.address)
+
+  return { 
+    mist,
+    initialSupply
+  }
 }
+
+  export async function deployAludel(args: Array<any>) {
+    const factory = await ethers.getContractFactory('Aludel')
+    return factory.deploy(...args)
+  }
 
 export async function createInstance(instanceName: string, factory: Contract, signer: Signer, args: string = '0x') {
   // get contract class
