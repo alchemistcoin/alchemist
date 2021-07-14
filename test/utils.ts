@@ -1,7 +1,7 @@
 import { TypedDataField } from '@ethersproject/abstract-signer'
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/dist/src/signer-with-address'
 import { BigNumber, BigNumberish, BytesLike, Contract, Signer, Wallet } from 'ethers'
-import { ethers, network, upgrades } from 'hardhat'
+import { ethers, network } from 'hardhat'
 import '@openzeppelin/hardhat-upgrades'
 import { parseEther } from 'ethers/lib/utils'
 
