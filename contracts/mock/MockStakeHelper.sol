@@ -5,8 +5,6 @@ pragma abicoder v2;
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import {Aludel} from "../aludel/Aludel.sol";
-// import {IFactory} from "../Factory/IFactory.sol";
-// import {IUniversalVault} from "../UniversalVault.sol";
 
 contract MockStakeHelper {
     function flashStake(
