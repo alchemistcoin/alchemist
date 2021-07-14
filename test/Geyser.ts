@@ -130,8 +130,8 @@ describe('Aludel', function () {
     // deploy dependencies
     powerSwitchFactory = await deployContract('PowerSwitchFactory')
     rewardPoolFactory = await deployContract('RewardPoolFactory')
-    vaultTemplate = await deployContract('UniversalVault')
-    vaultFactory = await deployContract('VaultFactory', [vaultTemplate.address])
+    vaultTemplate = await deployContract('Crucible')
+    vaultFactory = await deployContract('CrucibleFactory', [vaultTemplate.address])
 
     // deploy mock tokens
     stakingToken = await deployContract('MockERC20', [admin.address, mockTokenSupply])
@@ -178,7 +178,7 @@ describe('Aludel', function () {
         ]
         const geyser = await deployAludel(args)
 
-        const data = await geyser.getGeyserData()
+        const data = await geyser.getAludelData()
 
         expect(data.stakingToken).to.eq(stakingToken.address)
         expect(data.rewardToken).to.eq(rewardToken.address)
@@ -214,19 +214,19 @@ describe('Aludel', function () {
       ]
       geyser = await deployAludel(args)
       powerSwitch = await ethers.getContractAt('PowerSwitch', await geyser.getPowerSwitch())
-      rewardPool = await ethers.getContractAt('RewardPool', (await geyser.getGeyserData()).rewardPool)
+      rewardPool = await ethers.getContractAt('RewardPool', (await geyser.getAludelData()).rewardPool)
     })
-    describe('fundGeyser', function () {
+    describe('fundAludel', function () {
       describe('with insufficient approval', function () {
         it('should fail', async function () {
-          await expect(geyser.connect(admin).fundGeyser(amplInitialSupply, YEAR)).to.be.reverted
+          await expect(geyser.connect(admin).fund(amplInitialSupply, YEAR)).to.be.reverted
         })
       })
       describe('with duration of zero', function () {
         it('should fail', async function () {
           await rewardToken.connect(admin).approve(geyser.address, amplInitialSupply)
-          await expect(geyser.connect(admin).fundGeyser(amplInitialSupply, 0)).to.be.revertedWith(
-            'Geyser: invalid duration',
+          await expect(geyser.connect(admin).fund(amplInitialSupply, 0)).to.be.revertedWith(
+            'Aludel: invalid duration',
           )
         })
       })
@@ -234,7 +234,7 @@ describe('Aludel', function () {
         it('should fail', async function () {
           await rewardToken.connect(admin).transfer(user.address, amplInitialSupply)
           await rewardToken.connect(user).approve(geyser.address, amplInitialSupply)
-          await expect(geyser.connect(user).fundGeyser(amplInitialSupply, YEAR)).to.be.revertedWith(
+          await expect(geyser.connect(user).fund(amplInitialSupply, YEAR)).to.be.revertedWith(
             'Ownable: caller is not the owner',
           )
         })
@@ -243,7 +243,7 @@ describe('Aludel', function () {
         it('should fail', async function () {
           await rewardToken.connect(admin).approve(geyser.address, amplInitialSupply)
           await powerSwitch.connect(admin).powerOff()
-          await expect(geyser.connect(admin).fundGeyser(amplInitialSupply, YEAR)).to.be.revertedWith(
+          await expect(geyser.connect(admin).fund(amplInitialSupply, YEAR)).to.be.revertedWith(
             'Powered: is not online',
           )
         })
@@ -252,7 +252,7 @@ describe('Aludel', function () {
         it('should fail', async function () {
           await rewardToken.connect(admin).approve(geyser.address, amplInitialSupply)
           await powerSwitch.connect(admin).emergencyShutdown()
-          await expect(geyser.connect(admin).fundGeyser(amplInitialSupply, YEAR)).to.be.revertedWith(
+          await expect(geyser.connect(admin).fund(amplInitialSupply, YEAR)).to.be.revertedWith(
             'Powered: is not online',
           )
         })
@@ -263,12 +263,12 @@ describe('Aludel', function () {
         })
         describe('at first funding', function () {
           it('should succeed', async function () {
-            await geyser.connect(admin).fundGeyser(amplInitialSupply, YEAR)
+            await geyser.connect(admin).fund(amplInitialSupply, YEAR)
           })
           it('should update state correctly', async function () {
-            await geyser.connect(admin).fundGeyser(amplInitialSupply, YEAR)
+            await geyser.connect(admin).fund(amplInitialSupply, YEAR)
 
-            const data = await geyser.getGeyserData()
+            const data = await geyser.getAludelData()
 
             expect(data.rewardSharesOutstanding).to.eq(amplInitialSupply.mul(BASE_SHARES_PER_WEI))
             expect(data.rewardSchedules.length).to.eq(1)
@@ -277,28 +277,28 @@ describe('Aludel', function () {
             expect(data.rewardSchedules[0].shares).to.eq(amplInitialSupply.mul(BASE_SHARES_PER_WEI))
           })
           it('should emit event', async function () {
-            await expect(geyser.connect(admin).fundGeyser(amplInitialSupply, YEAR))
-              .to.emit(geyser, 'GeyserFunded')
+            await expect(geyser.connect(admin).fund(amplInitialSupply, YEAR))
+              .to.emit(geyser, 'AludelFunded')
               .withArgs(amplInitialSupply, YEAR)
           })
           it('should transfer tokens', async function () {
-            await expect(geyser.connect(admin).fundGeyser(amplInitialSupply, YEAR))
+            await expect(geyser.connect(admin).fund(amplInitialSupply, YEAR))
               .to.emit(rewardToken, 'Transfer')
               .withArgs(admin.address, rewardPool.address, amplInitialSupply)
           })
         })
         describe('at second funding', function () {
           beforeEach(async function () {
-            await geyser.connect(admin).fundGeyser(amplInitialSupply.div(2), YEAR)
+            await geyser.connect(admin).fund(amplInitialSupply.div(2), YEAR)
           })
           describe('with no rebase', function () {
             it('should succeed', async function () {
-              await geyser.connect(admin).fundGeyser(amplInitialSupply.div(2), YEAR)
+              await geyser.connect(admin).fund(amplInitialSupply.div(2), YEAR)
             })
             it('should update state correctly', async function () {
-              await geyser.connect(admin).fundGeyser(amplInitialSupply.div(2), YEAR)
+              await geyser.connect(admin).fund(amplInitialSupply.div(2), YEAR)
 
-              const data = await geyser.getGeyserData()
+              const data = await geyser.getAludelData()
 
               expect(data.rewardSharesOutstanding).to.eq(amplInitialSupply.mul(BASE_SHARES_PER_WEI))
               expect(data.rewardSchedules.length).to.eq(2)
@@ -310,12 +310,12 @@ describe('Aludel', function () {
               expect(data.rewardSchedules[1].shares).to.eq(amplInitialSupply.mul(BASE_SHARES_PER_WEI).div(2))
             })
             it('should emit event', async function () {
-              await expect(geyser.connect(admin).fundGeyser(amplInitialSupply.div(2), YEAR))
-                .to.emit(geyser, 'GeyserFunded')
+              await expect(geyser.connect(admin).fund(amplInitialSupply.div(2), YEAR))
+                .to.emit(geyser, 'AludelFunded')
                 .withArgs(amplInitialSupply.div(2), YEAR)
             })
             it('should transfer tokens', async function () {
-              await expect(geyser.connect(admin).fundGeyser(amplInitialSupply.div(2), YEAR))
+              await expect(geyser.connect(admin).fund(amplInitialSupply.div(2), YEAR))
                 .to.emit(rewardToken, 'Transfer')
                 .withArgs(admin.address, rewardPool.address, amplInitialSupply.div(2))
             })
@@ -327,12 +327,12 @@ describe('Aludel', function () {
               await rewardToken.connect(admin).approve(geyser.address, amplInitialSupply)
             })
             it('should succeed', async function () {
-              await geyser.connect(admin).fundGeyser(amplInitialSupply, YEAR)
+              await geyser.connect(admin).fund(amplInitialSupply, YEAR)
             })
             it('should update state correctly', async function () {
-              await geyser.connect(admin).fundGeyser(amplInitialSupply, YEAR)
+              await geyser.connect(admin).fund(amplInitialSupply, YEAR)
 
-              const data = await geyser.getGeyserData()
+              const data = await geyser.getAludelData()
 
               expect(data.rewardSharesOutstanding).to.eq(amplInitialSupply.mul(BASE_SHARES_PER_WEI))
               expect(data.rewardSchedules.length).to.eq(2)
@@ -344,12 +344,12 @@ describe('Aludel', function () {
               expect(data.rewardSchedules[1].shares).to.eq(amplInitialSupply.mul(BASE_SHARES_PER_WEI).div(2))
             })
             it('should emit event', async function () {
-              await expect(geyser.connect(admin).fundGeyser(amplInitialSupply, YEAR))
-                .to.emit(geyser, 'GeyserFunded')
+              await expect(geyser.connect(admin).fund(amplInitialSupply, YEAR))
+                .to.emit(geyser, 'AludelFunded')
                 .withArgs(amplInitialSupply, YEAR)
             })
             it('should transfer tokens', async function () {
-              await expect(geyser.connect(admin).fundGeyser(amplInitialSupply, YEAR))
+              await expect(geyser.connect(admin).fund(amplInitialSupply, YEAR))
                 .to.emit(rewardToken, 'Transfer')
                 .withArgs(admin.address, rewardPool.address, amplInitialSupply)
             })
@@ -360,12 +360,12 @@ describe('Aludel', function () {
               await invokeRebase(rewardToken, -50, admin)
             })
             it('should succeed', async function () {
-              await geyser.connect(admin).fundGeyser(amplInitialSupply.div(4), YEAR)
+              await geyser.connect(admin).fund(amplInitialSupply.div(4), YEAR)
             })
             it('should update state correctly', async function () {
-              await geyser.connect(admin).fundGeyser(amplInitialSupply.div(4), YEAR)
+              await geyser.connect(admin).fund(amplInitialSupply.div(4), YEAR)
 
-              const data = await geyser.getGeyserData()
+              const data = await geyser.getAludelData()
 
               expect(data.rewardSharesOutstanding).to.eq(amplInitialSupply.mul(BASE_SHARES_PER_WEI))
               expect(data.rewardSchedules.length).to.eq(2)
@@ -377,12 +377,12 @@ describe('Aludel', function () {
               expect(data.rewardSchedules[1].shares).to.eq(amplInitialSupply.mul(BASE_SHARES_PER_WEI).div(2))
             })
             it('should emit event', async function () {
-              await expect(geyser.connect(admin).fundGeyser(amplInitialSupply.div(4), YEAR))
-                .to.emit(geyser, 'GeyserFunded')
+              await expect(geyser.connect(admin).fund(amplInitialSupply.div(4), YEAR))
+                .to.emit(geyser, 'AludelFunded')
                 .withArgs(amplInitialSupply.div(4), YEAR)
             })
             it('should transfer tokens', async function () {
-              await expect(geyser.connect(admin).fundGeyser(amplInitialSupply.div(4), YEAR))
+              await expect(geyser.connect(admin).fund(amplInitialSupply.div(4), YEAR))
                 .to.emit(rewardToken, 'Transfer')
                 .withArgs(admin.address, rewardPool.address, amplInitialSupply.div(4))
             })
@@ -394,7 +394,7 @@ describe('Aludel', function () {
           let vault: Contract
           beforeEach(async function () {
             await geyser.connect(admin).registerVaultFactory(vaultFactory.address)
-            vault = await createInstance('UniversalVault', vaultFactory, user)
+            vault = await createInstance('Crucible', vaultFactory, user)
 
             await stakingToken.connect(admin).transfer(vault.address, stakeAmount)
 
@@ -403,7 +403,7 @@ describe('Aludel', function () {
             await increaseTime(rewardScaling.time)
 
             await rewardToken.connect(admin).approve(geyser.address, amplInitialSupply)
-            await geyser.connect(admin).fundGeyser(amplInitialSupply.div(2), rewardScaling.time)
+            await geyser.connect(admin).fund(amplInitialSupply.div(2), rewardScaling.time)
           })
           describe('with partial rewards exausted', function () {
             beforeEach(async function () {
@@ -411,12 +411,12 @@ describe('Aludel', function () {
               await unstakeAndClaim(user, geyser, vault, stakingToken, stakeAmount)
             })
             it('should succeed', async function () {
-              await geyser.connect(admin).fundGeyser(amplInitialSupply.div(2), rewardScaling.time)
+              await geyser.connect(admin).fund(amplInitialSupply.div(2), rewardScaling.time)
             })
             it('should update state correctly', async function () {
-              await geyser.connect(admin).fundGeyser(amplInitialSupply.div(2), rewardScaling.time)
+              await geyser.connect(admin).fund(amplInitialSupply.div(2), rewardScaling.time)
 
-              const data = await geyser.getGeyserData()
+              const data = await geyser.getAludelData()
 
               expect(data.rewardSharesOutstanding).to.eq(amplInitialSupply.mul(BASE_SHARES_PER_WEI).mul(3).div(4))
               expect(data.rewardSchedules.length).to.eq(2)
@@ -427,12 +427,12 @@ describe('Aludel', function () {
               expect(data.rewardSchedules[1].shares).to.eq(amplInitialSupply.mul(BASE_SHARES_PER_WEI).div(2))
             })
             it('should emit event', async function () {
-              await expect(geyser.connect(admin).fundGeyser(amplInitialSupply.div(2), rewardScaling.time))
-                .to.emit(geyser, 'GeyserFunded')
+              await expect(geyser.connect(admin).fund(amplInitialSupply.div(2), rewardScaling.time))
+                .to.emit(geyser, 'AludelFunded')
                 .withArgs(amplInitialSupply.div(2), rewardScaling.time)
             })
             it('should transfer tokens', async function () {
-              await expect(geyser.connect(admin).fundGeyser(amplInitialSupply.div(2), rewardScaling.time))
+              await expect(geyser.connect(admin).fund(amplInitialSupply.div(2), rewardScaling.time))
                 .to.emit(rewardToken, 'Transfer')
                 .withArgs(admin.address, rewardPool.address, amplInitialSupply.div(2))
             })
@@ -443,12 +443,12 @@ describe('Aludel', function () {
               await unstakeAndClaim(user, geyser, vault, stakingToken, stakeAmount)
             })
             it('should succeed', async function () {
-              await geyser.connect(admin).fundGeyser(amplInitialSupply.div(2), rewardScaling.time)
+              await geyser.connect(admin).fund(amplInitialSupply.div(2), rewardScaling.time)
             })
             it('should update state correctly', async function () {
-              await geyser.connect(admin).fundGeyser(amplInitialSupply.div(2), rewardScaling.time)
+              await geyser.connect(admin).fund(amplInitialSupply.div(2), rewardScaling.time)
 
-              const data = await geyser.getGeyserData()
+              const data = await geyser.getAludelData()
 
               expect(data.rewardSharesOutstanding).to.eq(amplInitialSupply.mul(BASE_SHARES_PER_WEI).div(2))
               expect(data.rewardSchedules.length).to.eq(2)
@@ -459,12 +459,12 @@ describe('Aludel', function () {
               expect(data.rewardSchedules[1].shares).to.eq(amplInitialSupply.mul(BASE_SHARES_PER_WEI).div(2))
             })
             it('should emit event', async function () {
-              await expect(geyser.connect(admin).fundGeyser(amplInitialSupply.div(2), rewardScaling.time))
-                .to.emit(geyser, 'GeyserFunded')
+              await expect(geyser.connect(admin).fund(amplInitialSupply.div(2), rewardScaling.time))
+                .to.emit(geyser, 'AludelFunded')
                 .withArgs(amplInitialSupply.div(2), rewardScaling.time)
             })
             it('should transfer tokens', async function () {
-              await expect(geyser.connect(admin).fundGeyser(amplInitialSupply.div(2), rewardScaling.time))
+              await expect(geyser.connect(admin).fund(amplInitialSupply.div(2), rewardScaling.time))
                 .to.emit(rewardToken, 'Transfer')
                 .withArgs(admin.address, rewardPool.address, amplInitialSupply.div(2))
             })
@@ -476,7 +476,7 @@ describe('Aludel', function () {
     describe('isValidVault', function () {
       let vault: Contract
       beforeEach(async function () {
-        vault = await createInstance('UniversalVault', vaultFactory, user)
+        vault = await createInstance('Crucible', vaultFactory, user)
       })
       describe('when no factory registered', function () {
         it('should be false', async function () {
@@ -505,8 +505,8 @@ describe('Aludel', function () {
         let secondVault: Contract
         beforeEach(async function () {
           await geyser.connect(admin).registerVaultFactory(vaultFactory.address)
-          secondFactory = await deployContract('VaultFactory', [vaultTemplate.address])
-          secondVault = await createInstance('UniversalVault', secondFactory, user)
+          secondFactory = await deployContract('CrucibleFactory', [vaultTemplate.address])
+          secondVault = await createInstance('Crucible', secondFactory, user)
         })
         it('should be false', async function () {
           expect(await geyser.isValidVault(secondVault.address)).to.be.false
@@ -516,8 +516,8 @@ describe('Aludel', function () {
         let secondFactory: Contract
         let secondVault: Contract
         beforeEach(async function () {
-          secondFactory = await deployContract('VaultFactory', [vaultTemplate.address])
-          secondVault = await createInstance('UniversalVault', secondFactory, user)
+          secondFactory = await deployContract('CrucibleFactory', [vaultTemplate.address])
+          secondVault = await createInstance('Crucible', secondFactory, user)
           await geyser.connect(admin).registerVaultFactory(vaultFactory.address)
           await geyser.connect(admin).registerVaultFactory(secondFactory.address)
         })
@@ -587,7 +587,7 @@ describe('Aludel', function () {
         })
         it('should fail', async function () {
           await expect(geyser.connect(admin).registerVaultFactory(vaultFactory.address)).to.be.revertedWith(
-            'Geyser: vault factory already registered',
+            'Aludel: vault factory already registered',
           )
         })
       })
@@ -695,7 +695,7 @@ describe('Aludel', function () {
       describe('when never added', function () {
         it('should fail', async function () {
           await expect(geyser.connect(admin).removeVaultFactory(vaultFactory.address)).to.be.revertedWith(
-            'Geyser: vault factory not registered',
+            'Aludel: vault factory not registered',
           )
         })
       })
@@ -706,7 +706,7 @@ describe('Aludel', function () {
         })
         it('should fail', async function () {
           await expect(geyser.connect(admin).removeVaultFactory(vaultFactory.address)).to.be.revertedWith(
-            'Geyser: vault factory not registered',
+            'Aludel: vault factory not registered',
           )
         })
       })
@@ -725,35 +725,35 @@ describe('Aludel', function () {
           describe('with address zero', function () {
             it('should fail', async function () {
               await expect(geyser.connect(admin).registerBonusToken(ethers.constants.AddressZero)).to.be.revertedWith(
-                'Geyser: invalid address',
+                'Aludel: invalid address',
               )
             })
           })
           describe('with geyser address', function () {
             it('should fail', async function () {
               await expect(geyser.connect(admin).registerBonusToken(geyser.address)).to.be.revertedWith(
-                'Geyser: invalid address',
+                'Aludel: invalid address',
               )
             })
           })
           describe('with staking token', function () {
             it('should fail', async function () {
               await expect(geyser.connect(admin).registerBonusToken(stakingToken.address)).to.be.revertedWith(
-                'Geyser: invalid address',
+                'Aludel: invalid address',
               )
             })
           })
           describe('with reward token', function () {
             it('should fail', async function () {
               await expect(geyser.connect(admin).registerBonusToken(rewardToken.address)).to.be.revertedWith(
-                'Geyser: invalid address',
+                'Aludel: invalid address',
               )
             })
           })
           describe('with rewardPool address', function () {
             it('should fail', async function () {
               await expect(geyser.connect(admin).registerBonusToken(rewardPool.address)).to.be.revertedWith(
-                'Geyser: invalid address',
+                'Aludel: invalid address',
               )
             })
           })
@@ -780,7 +780,7 @@ describe('Aludel', function () {
           describe('with same token', function () {
             it('should fail', async function () {
               await expect(geyser.connect(admin).registerBonusToken(bonusToken.address)).to.be.revertedWith(
-                'Geyser: invalid address',
+                'Aludel: invalid address',
               )
             })
           })
@@ -842,14 +842,14 @@ describe('Aludel', function () {
         it('should fail', async function () {
           await expect(
             geyser.connect(admin).rescueTokensFromRewardPool(rewardToken.address, admin.address, mockTokenSupply),
-          ).to.be.revertedWith('Geyser: invalid address')
+          ).to.be.revertedWith('Aludel: invalid address')
         })
       })
       describe('with bonus token', function () {
         it('should fail', async function () {
           await expect(
             geyser.connect(admin).rescueTokensFromRewardPool(bonusToken.address, admin.address, mockTokenSupply),
-          ).to.be.revertedWith('Geyser: invalid address')
+          ).to.be.revertedWith('Aludel: invalid address')
         })
       })
       describe('with staking token', function () {
@@ -871,28 +871,28 @@ describe('Aludel', function () {
         it('should fail', async function () {
           await expect(
             geyser.connect(admin).rescueTokensFromRewardPool(otherToken.address, geyser.address, mockTokenSupply),
-          ).to.be.revertedWith('Geyser: invalid address')
+          ).to.be.revertedWith('Aludel: invalid address')
         })
       })
       describe('with staking token as recipient', function () {
         it('should fail', async function () {
           await expect(
             geyser.connect(admin).rescueTokensFromRewardPool(otherToken.address, stakingToken.address, mockTokenSupply),
-          ).to.be.revertedWith('Geyser: invalid address')
+          ).to.be.revertedWith('Aludel: invalid address')
         })
       })
       describe('with reward token as recipient', function () {
         it('should fail', async function () {
           await expect(
             geyser.connect(admin).rescueTokensFromRewardPool(otherToken.address, rewardToken.address, mockTokenSupply),
-          ).to.be.revertedWith('Geyser: invalid address')
+          ).to.be.revertedWith('Aludel: invalid address')
         })
       })
       describe('with rewardPool as recipient', function () {
         it('should fail', async function () {
           await expect(
             geyser.connect(admin).rescueTokensFromRewardPool(otherToken.address, rewardPool.address, mockTokenSupply),
-          ).to.be.revertedWith('Geyser: invalid address')
+          ).to.be.revertedWith('Aludel: invalid address')
         })
       })
       describe('with address 0 as recipient', function () {
@@ -901,7 +901,7 @@ describe('Aludel', function () {
             geyser
               .connect(admin)
               .rescueTokensFromRewardPool(otherToken.address, ethers.constants.AddressZero, mockTokenSupply),
-          ).to.be.revertedWith('Geyser: invalid address')
+          ).to.be.revertedWith('Aludel: invalid address')
         })
       })
       describe('with other address as recipient', function () {
@@ -1008,7 +1008,7 @@ describe('Aludel', function () {
       geyser = await deployAludel(args)
       await geyser.connect(admin).registerVaultFactory(vaultFactory.address)
       powerSwitch = await ethers.getContractAt('PowerSwitch', await geyser.getPowerSwitch())
-      rewardPool = await ethers.getContractAt('RewardPool', (await geyser.getGeyserData()).rewardPool)
+      rewardPool = await ethers.getContractAt('RewardPool', (await geyser.getAludelData()).rewardPool)
     })
 
     describe('stake', function () {
@@ -1016,7 +1016,7 @@ describe('Aludel', function () {
       let vault: Contract
 
       beforeEach(async function () {
-        vault = await createInstance('UniversalVault', vaultFactory, user)
+        vault = await createInstance('Crucible', vaultFactory, user)
         await stakingToken.connect(admin).transfer(vault.address, stakeAmount)
       })
       describe('when offline', function () {
@@ -1039,19 +1039,19 @@ describe('Aludel', function () {
         it('should fail', async function () {
           await geyser.connect(admin).removeVaultFactory(vaultFactory.address)
           await expect(stake(user, geyser, vault, stakingToken, stakeAmount)).to.be.revertedWith(
-            'Geyser: vault is not registered',
+            'Aludel: vault is not registered',
           )
         })
       })
       describe('with amount of zero', function () {
         it('should fail', async function () {
-          await expect(stake(user, geyser, vault, stakingToken, '0')).to.be.revertedWith('Geyser: no amount staked')
+          await expect(stake(user, geyser, vault, stakingToken, '0')).to.be.revertedWith('Aludel: no amount staked')
         })
       })
       describe('with insufficient balance', function () {
         it('should fail', async function () {
           await expect(stake(user, geyser, vault, stakingToken, stakeAmount.mul(2))).to.be.revertedWith(
-            'UniversalVault: insufficient balance',
+            'Crucible: insufficient balance',
           )
         })
       })
@@ -1063,7 +1063,7 @@ describe('Aludel', function () {
       describe('when funded', function () {
         beforeEach(async function () {
           await rewardToken.connect(admin).approve(geyser.address, amplInitialSupply)
-          await geyser.connect(admin).fundGeyser(amplInitialSupply, YEAR)
+          await geyser.connect(admin).fund(amplInitialSupply, YEAR)
         })
         describe('on first stake', function () {
           describe('as vault owner', function () {
@@ -1073,7 +1073,7 @@ describe('Aludel', function () {
             it('should update state', async function () {
               await stake(user, geyser, vault, stakingToken, stakeAmount)
 
-              const geyserData = await geyser.getGeyserData()
+              const geyserData = await geyser.getAludelData()
               const vaultData = await geyser.getVaultData(vault.address)
 
               expect(geyserData.totalStake).to.eq(stakeAmount)
@@ -1107,7 +1107,7 @@ describe('Aludel', function () {
           it('should update state', async function () {
             await stake(user, geyser, vault, stakingToken, stakeAmount.div(2))
 
-            const geyserData = await geyser.getGeyserData()
+            const geyserData = await geyser.getAludelData()
             const vaultData = await geyser.getVaultData(vault.address)
 
             expect(geyserData.totalStake).to.eq(stakeAmount)
@@ -1142,7 +1142,7 @@ describe('Aludel', function () {
           })
           it('should fail', async function () {
             await expect(stake(user, geyser, vault, stakingToken, stakeAmount.div(quantity))).to.be.revertedWith(
-              'Geyser: MAX_STAKES_PER_VAULT reached',
+              'Aludel: MAX_STAKES_PER_VAULT reached',
             )
           })
         })
@@ -1158,7 +1158,7 @@ describe('Aludel', function () {
         it('should update state', async function () {
           await stake(user, geyser, vault, stakingToken, stakeAmount)
 
-          const geyserData = await geyser.getGeyserData()
+          const geyserData = await geyser.getAludelData()
           const vaultData = await geyser.getVaultData(vault.address)
 
           expect(geyserData.totalStake).to.eq(stakeAmount)
@@ -1191,11 +1191,11 @@ describe('Aludel', function () {
         let vault: Contract
         beforeEach(async function () {
           await rewardToken.connect(admin).approve(geyser.address, rewardAmount)
-          await geyser.connect(admin).fundGeyser(rewardAmount, rewardScaling.time)
+          await geyser.connect(admin).fund(rewardAmount, rewardScaling.time)
 
           await increaseTime(rewardScaling.time)
 
-          vault = await createInstance('UniversalVault', vaultFactory, user)
+          vault = await createInstance('Crucible', vaultFactory, user)
 
           await stakingToken.connect(admin).transfer(vault.address, stakeAmount)
 
@@ -1234,14 +1234,14 @@ describe('Aludel', function () {
         describe('with amount of zero', function () {
           it('should fail', async function () {
             await expect(unstakeAndClaim(user, geyser, vault, stakingToken, 0)).to.be.revertedWith(
-              'Geyser: no amount unstaked',
+              'Aludel: no amount unstaked',
             )
           })
         })
         describe('with amount greater than stakes', function () {
           it('should fail', async function () {
             await expect(unstakeAndClaim(user, geyser, vault, stakingToken, stakeAmount.add(1))).to.be.revertedWith(
-              'Geyser: insufficient vault stake',
+              'Aludel: insufficient vault stake',
             )
           })
         })
@@ -1250,11 +1250,11 @@ describe('Aludel', function () {
         let vault: Contract
         beforeEach(async function () {
           await rewardToken.connect(admin).approve(geyser.address, rewardAmount)
-          await geyser.connect(admin).fundGeyser(rewardAmount, rewardScaling.time)
+          await geyser.connect(admin).fund(rewardAmount, rewardScaling.time)
 
           await increaseTime(rewardScaling.time)
 
-          vault = await createInstance('UniversalVault', vaultFactory, user)
+          vault = await createInstance('Crucible', vaultFactory, user)
 
           await stakingToken.connect(admin).transfer(vault.address, stakeAmount)
 
@@ -1268,7 +1268,7 @@ describe('Aludel', function () {
         it('should update state', async function () {
           await unstakeAndClaim(user, geyser, vault, stakingToken, stakeAmount)
 
-          const geyserData = await geyser.getGeyserData()
+          const geyserData = await geyser.getAludelData()
           const vaultData = await geyser.getVaultData(vault.address)
 
           expect(geyserData.rewardSharesOutstanding).to.eq(0)
@@ -1301,11 +1301,11 @@ describe('Aludel', function () {
         let vault: Contract
         beforeEach(async function () {
           await rewardToken.connect(admin).approve(geyser.address, rewardAmount)
-          await geyser.connect(admin).fundGeyser(rewardAmount, rewardScaling.time)
+          await geyser.connect(admin).fund(rewardAmount, rewardScaling.time)
 
           await increaseTime(rewardScaling.time)
 
-          vault = await createInstance('UniversalVault', vaultFactory, user)
+          vault = await createInstance('Crucible', vaultFactory, user)
 
           await stakingToken.connect(admin).transfer(vault.address, stakeAmount)
 
@@ -1319,7 +1319,7 @@ describe('Aludel', function () {
         it('should update state', async function () {
           await unstakeAndClaim(user, geyser, vault, stakingToken, stakeAmount)
 
-          const geyserData = await geyser.getGeyserData()
+          const geyserData = await geyser.getAludelData()
           const vaultData = await geyser.getVaultData(vault.address)
 
           expect(geyserData.rewardSharesOutstanding).to.eq(rewardAmount.sub(expectedReward).mul(BASE_SHARES_PER_WEI))
@@ -1363,14 +1363,14 @@ describe('Aludel', function () {
           geyser = await deployAludel(args)
           await geyser.connect(admin).registerVaultFactory(vaultFactory.address)
           powerSwitch = await ethers.getContractAt('PowerSwitch', await geyser.getPowerSwitch())
-          rewardPool = await ethers.getContractAt('RewardPool', (await geyser.getGeyserData()).rewardPool)
+          rewardPool = await ethers.getContractAt('RewardPool', (await geyser.getAludelData()).rewardPool)
 
           await rewardToken.connect(admin).approve(geyser.address, rewardAmount)
-          await geyser.connect(admin).fundGeyser(rewardAmount, rewardScaling.time)
+          await geyser.connect(admin).fund(rewardAmount, rewardScaling.time)
 
           await increaseTime(rewardScaling.time)
 
-          vault = await createInstance('UniversalVault', vaultFactory, user)
+          vault = await createInstance('Crucible', vaultFactory, user)
 
           await stakingToken.connect(admin).transfer(vault.address, stakeAmount)
 
@@ -1384,7 +1384,7 @@ describe('Aludel', function () {
         it('should update state', async function () {
           await unstakeAndClaim(user, geyser, vault, stakingToken, stakeAmount)
 
-          const geyserData = await geyser.getGeyserData()
+          const geyserData = await geyser.getAludelData()
           const vaultData = await geyser.getVaultData(vault.address)
 
           expect(geyserData.rewardSharesOutstanding).to.eq(rewardAmount.sub(expectedReward).mul(BASE_SHARES_PER_WEI))
@@ -1413,7 +1413,7 @@ describe('Aludel', function () {
       describe('with no reward', function () {
         let vault: Contract
         beforeEach(async function () {
-          vault = await createInstance('UniversalVault', vaultFactory, user)
+          vault = await createInstance('Crucible', vaultFactory, user)
 
           await stakingToken.connect(admin).transfer(vault.address, stakeAmount)
 
@@ -1427,7 +1427,7 @@ describe('Aludel', function () {
         it('should update state', async function () {
           await unstakeAndClaim(user, geyser, vault, stakingToken, stakeAmount)
 
-          const geyserData = await geyser.getGeyserData()
+          const geyserData = await geyser.getAludelData()
           const vaultData = await geyser.getVaultData(vault.address)
 
           expect(geyserData.rewardSharesOutstanding).to.eq(0)
@@ -1452,7 +1452,7 @@ describe('Aludel', function () {
 
         let vault: Contract
         beforeEach(async function () {
-          vault = await createInstance('UniversalVault', vaultFactory, user)
+          vault = await createInstance('Crucible', vaultFactory, user)
 
           await stakingToken.connect(admin).transfer(vault.address, stakeAmount)
 
@@ -1461,7 +1461,7 @@ describe('Aludel', function () {
           await increaseTime(rewardScaling.time)
 
           await rewardToken.connect(admin).approve(geyser.address, rewardAmount)
-          await geyser.connect(admin).fundGeyser(rewardAmount, rewardScaling.time)
+          await geyser.connect(admin).fund(rewardAmount, rewardScaling.time)
 
           await increaseTime(rewardScaling.time / 2)
         })
@@ -1471,7 +1471,7 @@ describe('Aludel', function () {
         it('should update state', async function () {
           await unstakeAndClaim(user, geyser, vault, stakingToken, stakeAmount)
 
-          const geyserData = await geyser.getGeyserData()
+          const geyserData = await geyser.getAludelData()
           const vaultData = await geyser.getVaultData(vault.address)
 
           expect(geyserData.rewardSharesOutstanding).to.eq(rewardAmount.sub(expectedReward).mul(BASE_SHARES_PER_WEI))
@@ -1502,11 +1502,11 @@ describe('Aludel', function () {
 
         beforeEach(async function () {
           await rewardToken.connect(admin).approve(geyser.address, rewardAmount)
-          await geyser.connect(admin).fundGeyser(rewardAmount, rewardScaling.time)
+          await geyser.connect(admin).fund(rewardAmount, rewardScaling.time)
 
           await increaseTime(rewardScaling.time)
 
-          vault = await createInstance('UniversalVault', vaultFactory, user)
+          vault = await createInstance('Crucible', vaultFactory, user)
 
           await stakingToken.connect(admin).transfer(vault.address, stakeAmount)
 
@@ -1546,7 +1546,7 @@ describe('Aludel', function () {
             ),
           )
 
-          const geyserData = await geyser.getGeyserData()
+          const geyserData = await geyser.getAludelData()
           const vaultData = await geyser.getVaultData(vault.address)
 
           expect(geyserData.rewardSharesOutstanding).to.eq(rewardAmount.mul(BASE_SHARES_PER_WEI))
@@ -1624,11 +1624,11 @@ describe('Aludel', function () {
         let vault: Contract
         beforeEach(async function () {
           await rewardToken.connect(admin).approve(geyser.address, rewardAmount)
-          await geyser.connect(admin).fundGeyser(rewardAmount, rewardScaling.time)
+          await geyser.connect(admin).fund(rewardAmount, rewardScaling.time)
 
           await increaseTime(rewardScaling.time)
 
-          vault = await createInstance('UniversalVault', vaultFactory, user)
+          vault = await createInstance('Crucible', vaultFactory, user)
 
           await stakingToken.connect(admin).transfer(vault.address, stakeAmount)
 
@@ -1645,7 +1645,7 @@ describe('Aludel', function () {
         it('should update state', async function () {
           await unstakeAndClaim(user, geyser, vault, stakingToken, stakeAmount)
 
-          const geyserData = await geyser.getGeyserData()
+          const geyserData = await geyser.getAludelData()
           const vaultData = await geyser.getVaultData(vault.address)
 
           expect(geyserData.rewardSharesOutstanding).to.eq(rewardAmount.sub(expectedReward).mul(BASE_SHARES_PER_WEI))
@@ -1682,11 +1682,11 @@ describe('Aludel', function () {
         let vault: Contract
         beforeEach(async function () {
           await rewardToken.connect(admin).approve(geyser.address, rewardAmount)
-          await geyser.connect(admin).fundGeyser(rewardAmount, rewardScaling.time)
+          await geyser.connect(admin).fund(rewardAmount, rewardScaling.time)
 
           await increaseTime(rewardScaling.time)
 
-          vault = await createInstance('UniversalVault', vaultFactory, user)
+          vault = await createInstance('Crucible', vaultFactory, user)
 
           await stakingToken.connect(admin).transfer(vault.address, stakeAmount)
 
@@ -1700,7 +1700,7 @@ describe('Aludel', function () {
         it('should update state', async function () {
           await unstakeAndClaim(user, geyser, vault, stakingToken, stakeAmount.div(2))
 
-          const geyserData = await geyser.getGeyserData()
+          const geyserData = await geyser.getAludelData()
           const vaultData = await geyser.getVaultData(vault.address)
 
           expect(geyserData.rewardSharesOutstanding).to.eq(rewardAmount.sub(expectedReward).mul(BASE_SHARES_PER_WEI))
@@ -1742,12 +1742,12 @@ describe('Aludel', function () {
         beforeEach(async function () {
           // fund geyser
           await rewardToken.connect(admin).approve(geyser.address, rewardAmount)
-          await geyser.connect(admin).fundGeyser(rewardAmount, rewardScaling.time)
+          await geyser.connect(admin).fund(rewardAmount, rewardScaling.time)
 
           await increaseTime(rewardScaling.time)
 
           // deploy vault and transfer stake
-          vault = await createInstance('UniversalVault', vaultFactory, user)
+          vault = await createInstance('Crucible', vaultFactory, user)
           await stakingToken.connect(admin).transfer(vault.address, currentStake)
 
           // perform multiple stakes in same block
@@ -1782,7 +1782,7 @@ describe('Aludel', function () {
         it('should update state', async function () {
           await unstakeAndClaim(user, geyser, vault, stakingToken, unstakedAmount)
 
-          const geyserData = await geyser.getGeyserData()
+          const geyserData = await geyser.getAludelData()
           const vaultData = await geyser.getVaultData(vault.address)
 
           expect(geyserData.rewardSharesOutstanding).to.eq(rewardAmount.sub(expectedReward).mul(BASE_SHARES_PER_WEI))
@@ -1826,12 +1826,12 @@ describe('Aludel', function () {
         beforeEach(async function () {
           // fund geyser
           await rewardToken.connect(admin).approve(geyser.address, rewardAmount)
-          await geyser.connect(admin).fundGeyser(rewardAmount, rewardScaling.time)
+          await geyser.connect(admin).fund(rewardAmount, rewardScaling.time)
 
           await increaseTime(rewardScaling.time)
 
           // deploy vault and transfer stake
-          vault = await createInstance('UniversalVault', vaultFactory, user)
+          vault = await createInstance('Crucible', vaultFactory, user)
           await stakingToken.connect(admin).transfer(vault.address, currentStake)
 
           // perform multiple stakes in same block
@@ -1866,7 +1866,7 @@ describe('Aludel', function () {
         it('should update state', async function () {
           await unstakeAndClaim(user, geyser, vault, stakingToken, unstakedAmount)
 
-          const geyserData = await geyser.getGeyserData()
+          const geyserData = await geyser.getAludelData()
           const vaultData = await geyser.getVaultData(vault.address)
 
           expect(geyserData.rewardSharesOutstanding).to.eq(rewardAmount.sub(expectedReward).mul(BASE_SHARES_PER_WEI))
@@ -1904,12 +1904,12 @@ describe('Aludel', function () {
         beforeEach(async function () {
           // fund geyser
           await rewardToken.connect(admin).approve(geyser.address, rewardAmount)
-          await geyser.connect(admin).fundGeyser(rewardAmount, rewardScaling.time)
+          await geyser.connect(admin).fund(rewardAmount, rewardScaling.time)
 
           await increaseTime(rewardScaling.time)
 
           // deploy vault and transfer stake
-          vault = await createInstance('UniversalVault', vaultFactory, user)
+          vault = await createInstance('Crucible', vaultFactory, user)
           await stakingToken.connect(admin).transfer(vault.address, currentStake)
 
           // perform multiple stakes in same block
@@ -1944,7 +1944,7 @@ describe('Aludel', function () {
         it('should update state', async function () {
           await unstakeAndClaim(user, geyser, vault, stakingToken, unstakedAmount)
 
-          const geyserData = await geyser.getGeyserData()
+          const geyserData = await geyser.getAludelData()
           const vaultData = await geyser.getVaultData(vault.address)
 
           expect(geyserData.rewardSharesOutstanding).to.eq(0)
@@ -1974,13 +1974,13 @@ describe('Aludel', function () {
         let vault: Contract
         beforeEach(async function () {
           await rewardToken.connect(admin).approve(geyser.address, rewardAmount)
-          await geyser.connect(admin).fundGeyser(rewardAmount, rewardScaling.time)
+          await geyser.connect(admin).fund(rewardAmount, rewardScaling.time)
 
           await increaseTime(rewardScaling.time)
 
           await geyser.connect(admin).registerBonusToken(bonusToken.address)
 
-          vault = await createInstance('UniversalVault', vaultFactory, user)
+          vault = await createInstance('Crucible', vaultFactory, user)
 
           await stakingToken.connect(admin).transfer(vault.address, stakeAmount)
         })
@@ -1995,7 +1995,7 @@ describe('Aludel', function () {
           it('should update state', async function () {
             await unstakeAndClaim(user, geyser, vault, stakingToken, stakeAmount)
 
-            const geyserData = await geyser.getGeyserData()
+            const geyserData = await geyser.getAludelData()
             const vaultData = await geyser.getVaultData(vault.address)
 
             expect(geyserData.rewardSharesOutstanding).to.eq(0)
@@ -2036,7 +2036,7 @@ describe('Aludel', function () {
           it('should update state', async function () {
             await unstakeAndClaim(user, geyser, vault, stakingToken, stakeAmount)
 
-            const geyserData = await geyser.getGeyserData()
+            const geyserData = await geyser.getAludelData()
             const vaultData = await geyser.getVaultData(vault.address)
 
             expect(geyserData.rewardSharesOutstanding).to.eq(0)
@@ -2100,7 +2100,7 @@ describe('Aludel', function () {
           it('should update state', async function () {
             await unstakeAndClaim(user, geyser, vault, stakingToken, stakeAmount)
 
-            const geyserData = await geyser.getGeyserData()
+            const geyserData = await geyser.getAludelData()
             const vaultData = await geyser.getVaultData(vault.address)
 
             expect(geyserData.rewardSharesOutstanding).to.eq(rewardAmount.sub(expectedReward).mul(BASE_SHARES_PER_WEI))
@@ -2150,7 +2150,7 @@ describe('Aludel', function () {
         beforeEach(async function () {
           // fund geyser
           await rewardToken.connect(admin).approve(geyser.address, rewardAmount)
-          await geyser.connect(admin).fundGeyser(rewardAmount, rewardScaling.time)
+          await geyser.connect(admin).fund(rewardAmount, rewardScaling.time)
 
           await increaseTime(rewardScaling.time)
 
@@ -2158,7 +2158,7 @@ describe('Aludel', function () {
           vaults = []
           const permissions = []
           for (let index = 0; index < quantity; index++) {
-            const vault = await createInstance('UniversalVault', vaultFactory, user)
+            const vault = await createInstance('Crucible', vaultFactory, user)
             await stakingToken.connect(admin).transfer(vault.address, stakeAmount)
 
             vaults.push(vault)
@@ -2190,7 +2190,7 @@ describe('Aludel', function () {
             await unstakeAndClaim(user, geyser, vault, stakingToken, stakeAmount)
           }
 
-          const geyserData = await geyser.getGeyserData()
+          const geyserData = await geyser.getAludelData()
 
           expect(geyserData.rewardSharesOutstanding).to.eq(0)
           expect(geyserData.totalStake).to.eq(0)
@@ -2232,10 +2232,10 @@ describe('Aludel', function () {
       beforeEach(async function () {
         // fund geyser
         await rewardToken.connect(admin).approve(geyser.address, rewardAmount)
-        await geyser.connect(admin).fundGeyser(rewardAmount, rewardScaling.time)
+        await geyser.connect(admin).fund(rewardAmount, rewardScaling.time)
 
         // create vault
-        vault = await createInstance('UniversalVault', vaultFactory, user)
+        vault = await createInstance('Crucible', vaultFactory, user)
 
         // stake
         await stakingToken.connect(admin).transfer(vault.address, stakeAmount)
@@ -2252,7 +2252,7 @@ describe('Aludel', function () {
             gasLimit,
           })
 
-          const geyserData = await geyser.getGeyserData()
+          const geyserData = await geyser.getAludelData()
           const vaultData = await geyser.getVaultData(vault.address)
 
           expect(geyserData.rewardSharesOutstanding).to.eq(rewardAmount.mul(BASE_SHARES_PER_WEI))
@@ -2277,7 +2277,7 @@ describe('Aludel', function () {
             gasLimit,
           })
 
-          const geyserData = await geyser.getGeyserData()
+          const geyserData = await geyser.getAludelData()
           const vaultData = await geyser.getVaultData(vault.address)
 
           expect(geyserData.rewardSharesOutstanding).to.eq(rewardAmount.mul(BASE_SHARES_PER_WEI))
@@ -2302,7 +2302,7 @@ describe('Aludel', function () {
             gasLimit,
           })
 
-          const geyserData = await geyser.getGeyserData()
+          const geyserData = await geyser.getAludelData()
           const vaultData = await geyser.getVaultData(vault.address)
 
           expect(geyserData.rewardSharesOutstanding).to.eq(rewardAmount.mul(BASE_SHARES_PER_WEI))
@@ -2319,17 +2319,17 @@ describe('Aludel', function () {
             geyser.connect(user).rageQuit({
               gasLimit,
             }),
-          ).to.be.revertedWith('Geyser: no stake')
+          ).to.be.revertedWith('Aludel: no stake')
         })
       })
       describe('when no stake', function () {
         it('should fail', async function () {
-          const secondVault = await createInstance('UniversalVault', vaultFactory, user)
+          const secondVault = await createInstance('Crucible', vaultFactory, user)
           await expect(
             secondVault.connect(user).rageQuit(geyser.address, stakingToken.address, {
               gasLimit,
             }),
-          ).to.be.revertedWith('UniversalVault: missing lock')
+          ).to.be.revertedWith('Crucible: missing lock')
         })
       })
       describe('when insufficient gas', function () {
@@ -2338,7 +2338,7 @@ describe('Aludel', function () {
             vault.connect(user).rageQuit(geyser.address, stakingToken.address, {
               gasLimit: await vault.RAGEQUIT_GAS(),
             }),
-          ).to.be.revertedWith('UniversalVault: insufficient gas')
+          ).to.be.revertedWith('Crucible: insufficient gas')
         })
       })
       describe('when insufficient gas with multiple stakes', function () {
@@ -2355,7 +2355,7 @@ describe('Aludel', function () {
             vault.connect(user).rageQuit(geyser.address, stakingToken.address, {
               gasLimit: await vault.RAGEQUIT_GAS(),
             }),
-          ).to.be.revertedWith('UniversalVault: insufficient gas')
+          ).to.be.revertedWith('Crucible: insufficient gas')
         })
       })
       describe('when single stake', function () {
@@ -2369,7 +2369,7 @@ describe('Aludel', function () {
             gasLimit,
           })
 
-          const geyserData = await geyser.getGeyserData()
+          const geyserData = await geyser.getAludelData()
           const vaultData = await geyser.getVaultData(vault.address)
 
           expect(geyserData.rewardSharesOutstanding).to.eq(rewardAmount.mul(BASE_SHARES_PER_WEI))
@@ -2400,7 +2400,7 @@ describe('Aludel', function () {
             gasLimit,
           })
 
-          const geyserData = await geyser.getGeyserData()
+          const geyserData = await geyser.getAludelData()
           const vaultData = await geyser.getVaultData(vault.address)
 
           expect(geyserData.rewardSharesOutstanding).to.eq(rewardAmount.mul(BASE_SHARES_PER_WEI))

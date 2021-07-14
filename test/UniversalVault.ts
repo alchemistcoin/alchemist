@@ -11,7 +11,7 @@ enum DelegateType {
   OOG,
 }
 
-describe('UniversalVault', function () {
+describe('Crucible', function () {
   let accounts: SignerWithAddress[], admin: SignerWithAddress, recipient: SignerWithAddress, delegate: SignerWithAddress
   let owner: Wallet
   let factory: Contract, vault: Contract
@@ -31,13 +31,13 @@ describe('UniversalVault', function () {
 
   beforeEach(async function () {
     // deploy template
-    const template = await deployContract('UniversalVault')
+    const template = await deployContract('Crucible')
 
     // deploy factory
-    factory = await deployContract('VaultFactory', [template.address])
+    factory = await deployContract('CrucibleFactory', [template.address])
 
     // deploy instance
-    vault = await createInstance('UniversalVault', factory, owner)
+    vault = await createInstance('Crucible', factory, owner)
   })
 
   describe('nft', function () {

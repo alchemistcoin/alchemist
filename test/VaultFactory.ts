@@ -12,9 +12,9 @@ describe('VaultFactory', function () {
     // prepare signers
     accounts = await ethers.getSigners()
     // deploy template
-    template = await deployContract('UniversalVault')
+    template = await deployContract('Crucible')
     // deploy factory
-    factory = await deployContract('VaultFactory', [template.address])
+    factory = await deployContract('CrucibleFactory', [template.address])
   })
 
   describe('getTemplate', function () {
@@ -24,19 +24,19 @@ describe('VaultFactory', function () {
   })
   describe('create', function () {
     it('should succeed', async function () {
-      await createInstance('UniversalVault', factory, accounts[0])
+      await createInstance('Crucible', factory, accounts[0])
     })
     it('should successfully call owner', async function () {
-      const vault = await createInstance('UniversalVault', factory, accounts[0])
+      const vault = await createInstance('Crucible', factory, accounts[0])
       expect(await vault.owner()).to.eq(accounts[0].address)
     })
   })
   describe('create2', function () {
     it('should succeed', async function () {
-      await create2Instance('UniversalVault', factory, accounts[0], ethers.utils.randomBytes(32))
+      await create2Instance('Crucible', factory, accounts[0], ethers.utils.randomBytes(32))
     })
     it('should successfully call owner', async function () {
-      const vault = await create2Instance('UniversalVault', factory, accounts[0], ethers.utils.randomBytes(32))
+      const vault = await create2Instance('Crucible', factory, accounts[0], ethers.utils.randomBytes(32))
       expect(await vault.owner()).to.eq(accounts[0].address)
     })
   })
