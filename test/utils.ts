@@ -41,16 +41,6 @@ export async function deployContract(name: string, args: Array<any> = []) {
   return contract.deployed()
 }
 
-export async function deployAmpl(admin: SignerWithAddress) {
-  const factory = await ethers.getContractFactory('MockAmpl')
-  const ampl = await upgrades.deployProxy(factory, [admin.address], {
-    initializer: 'initialize(address)',
-  })
-  await ampl.connect(admin).setMonetaryPolicy(admin.address)
-  const amplInitialSupply = await ampl.balanceOf(admin.address)
-  return { ampl, amplInitialSupply }
-}
-
 export async function deployMist(admin: SignerWithAddress) {
   const factory = await ethers.getContractFactory('Alchemist')
 
