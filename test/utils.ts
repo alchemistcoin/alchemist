@@ -25,16 +25,6 @@ export async function increaseTime(seconds: number) {
   }
 }
 
-// Perc has to be a whole number
-export async function invokeRebase(ampl: Contract, perc: number, orchestrator: Signer) {
-  const PERC_DECIMALS = 2
-  const s = await ampl.totalSupply.call()
-  const ordinate = 10 ** PERC_DECIMALS
-  const p_ = ethers.BigNumber.from(perc * ordinate).div(100)
-  const s_ = s.mul(p_).div(ordinate)
-  await ampl.connect(orchestrator).rebase(1, s_)
-}
-
 export async function deployContract(name: string, args: Array<any> = []) {
   const factory = await ethers.getContractFactory(name)
   const contract = await factory.deploy(...args)

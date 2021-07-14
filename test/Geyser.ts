@@ -4,13 +4,12 @@ import { BigNumber, BigNumberish, Contract, Wallet } from 'ethers'
 import { ethers, network } from 'hardhat'
 import {
   createInstance,
-  deployAmpl,
   deployContract,
   deployAludel,
   getTimestamp,
   increaseTime,
-  invokeRebase,
   signPermission,
+  deployMist,
 } from './utils'
 
 /* 
@@ -134,8 +133,9 @@ describe('Aludel', function () {
     vaultFactory = await deployContract('CrucibleFactory', [vaultTemplate.address])
 
     // deploy mock tokens
-    stakingToken = await deployContract('MockERC20', [admin.address, mockTokenSupply])
-    ;({ ampl: rewardToken, amplInitialSupply } = await deployAmpl(admin))
+    stakingToken = await deployContract('MockERC20', [admin.address, mockTokenSupply]);
+
+    ({ mist: rewardToken, initialSupply: amplInitialSupply } = await deployMist(admin))
     bonusToken = await deployContract('MockERC20', [admin.address, mockTokenSupply])
   })
 
@@ -318,73 +318,6 @@ describe('Aludel', function () {
               await expect(geyser.connect(admin).fund(amplInitialSupply.div(2), YEAR))
                 .to.emit(rewardToken, 'Transfer')
                 .withArgs(admin.address, rewardPool.address, amplInitialSupply.div(2))
-            })
-          })
-          describe('with positive rebase of 200%', function () {
-            beforeEach(async function () {
-              // rebase of 100 doubles the inital supply
-              await invokeRebase(rewardToken, 100, admin)
-              await rewardToken.connect(admin).approve(geyser.address, amplInitialSupply)
-            })
-            it('should succeed', async function () {
-              await geyser.connect(admin).fund(amplInitialSupply, YEAR)
-            })
-            it('should update state correctly', async function () {
-              await geyser.connect(admin).fund(amplInitialSupply, YEAR)
-
-              const data = await geyser.getAludelData()
-
-              expect(data.rewardSharesOutstanding).to.eq(amplInitialSupply.mul(BASE_SHARES_PER_WEI))
-              expect(data.rewardSchedules.length).to.eq(2)
-              expect(data.rewardSchedules[0].duration).to.eq(YEAR)
-              expect(data.rewardSchedules[0].start).to.eq((await getTimestamp()) - 3)
-              expect(data.rewardSchedules[0].shares).to.eq(amplInitialSupply.mul(BASE_SHARES_PER_WEI).div(2))
-              expect(data.rewardSchedules[1].duration).to.eq(YEAR)
-              expect(data.rewardSchedules[1].start).to.eq(await getTimestamp())
-              expect(data.rewardSchedules[1].shares).to.eq(amplInitialSupply.mul(BASE_SHARES_PER_WEI).div(2))
-            })
-            it('should emit event', async function () {
-              await expect(geyser.connect(admin).fund(amplInitialSupply, YEAR))
-                .to.emit(geyser, 'AludelFunded')
-                .withArgs(amplInitialSupply, YEAR)
-            })
-            it('should transfer tokens', async function () {
-              await expect(geyser.connect(admin).fund(amplInitialSupply, YEAR))
-                .to.emit(rewardToken, 'Transfer')
-                .withArgs(admin.address, rewardPool.address, amplInitialSupply)
-            })
-          })
-          describe('with negative rebase of 50%', function () {
-            beforeEach(async function () {
-              // rebase of -50 halves the inital supply
-              await invokeRebase(rewardToken, -50, admin)
-            })
-            it('should succeed', async function () {
-              await geyser.connect(admin).fund(amplInitialSupply.div(4), YEAR)
-            })
-            it('should update state correctly', async function () {
-              await geyser.connect(admin).fund(amplInitialSupply.div(4), YEAR)
-
-              const data = await geyser.getAludelData()
-
-              expect(data.rewardSharesOutstanding).to.eq(amplInitialSupply.mul(BASE_SHARES_PER_WEI))
-              expect(data.rewardSchedules.length).to.eq(2)
-              expect(data.rewardSchedules[0].duration).to.eq(YEAR)
-              expect(data.rewardSchedules[0].start).to.eq((await getTimestamp()) - 2)
-              expect(data.rewardSchedules[0].shares).to.eq(amplInitialSupply.mul(BASE_SHARES_PER_WEI).div(2))
-              expect(data.rewardSchedules[1].duration).to.eq(YEAR)
-              expect(data.rewardSchedules[1].start).to.eq(await getTimestamp())
-              expect(data.rewardSchedules[1].shares).to.eq(amplInitialSupply.mul(BASE_SHARES_PER_WEI).div(2))
-            })
-            it('should emit event', async function () {
-              await expect(geyser.connect(admin).fund(amplInitialSupply.div(4), YEAR))
-                .to.emit(geyser, 'AludelFunded')
-                .withArgs(amplInitialSupply.div(4), YEAR)
-            })
-            it('should transfer tokens', async function () {
-              await expect(geyser.connect(admin).fund(amplInitialSupply.div(4), YEAR))
-                .to.emit(rewardToken, 'Transfer')
-                .withArgs(admin.address, rewardPool.address, amplInitialSupply.div(4))
             })
           })
         })
@@ -1051,7 +984,7 @@ describe('Aludel', function () {
       describe('with insufficient balance', function () {
         it('should fail', async function () {
           await expect(stake(user, geyser, vault, stakingToken, stakeAmount.mul(2))).to.be.revertedWith(
-            'Crucible: insufficient balance',
+            'UniversalVault: insufficient balance',
           )
         })
       })
@@ -2329,7 +2262,7 @@ describe('Aludel', function () {
             secondVault.connect(user).rageQuit(geyser.address, stakingToken.address, {
               gasLimit,
             }),
-          ).to.be.revertedWith('Crucible: missing lock')
+          ).to.be.revertedWith('UniversalVault: missing lock')
         })
       })
       describe('when insufficient gas', function () {
@@ -2338,7 +2271,7 @@ describe('Aludel', function () {
             vault.connect(user).rageQuit(geyser.address, stakingToken.address, {
               gasLimit: await vault.RAGEQUIT_GAS(),
             }),
-          ).to.be.revertedWith('Crucible: insufficient gas')
+          ).to.be.revertedWith('UniversalVault: insufficient gas')
         })
       })
       describe('when insufficient gas with multiple stakes', function () {
@@ -2355,7 +2288,7 @@ describe('Aludel', function () {
             vault.connect(user).rageQuit(geyser.address, stakingToken.address, {
               gasLimit: await vault.RAGEQUIT_GAS(),
             }),
-          ).to.be.revertedWith('Crucible: insufficient gas')
+          ).to.be.revertedWith('UniversalVault: insufficient gas')
         })
       })
       describe('when single stake', function () {
