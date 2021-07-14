@@ -44,7 +44,7 @@ export async function deployMist(admin: SignerWithAddress) {
     1000,
     BigNumber.from(14).mul(DAY),
     BigNumber.from(60).mul(DAY),
-    parseEther("1000"), //parseEther(1000000*10**18),
+    parseEther("1000"),
     Math.round(now.getTime() / 1000)
   )
 
