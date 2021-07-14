@@ -2,6 +2,8 @@ import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/dist/src/signer-wit
 import { expect } from 'chai'
 import { Contract, Wallet } from 'ethers'
 import { ethers } from 'hardhat'
+import { revertAfter } from './shared-before-each/revert-after'
+import { sharedBeforeEach } from './shared-before-each/shared-before-each'
 import { createInstance, deployContract, ETHER, signPermission } from './utils'
 
 enum DelegateType {
@@ -16,6 +18,8 @@ describe('Crucible', function () {
   let owner: Wallet
   let factory: Contract, vault: Contract
 
+  revertAfter();
+
   before(async function () {
     // prepare signers
     accounts = await ethers.getSigners()
@@ -29,7 +33,7 @@ describe('Crucible', function () {
     })
   })
 
-  beforeEach(async function () {
+  sharedBeforeEach(async function () {
     // deploy template
     const template = await deployContract('Crucible')
 
@@ -38,7 +42,7 @@ describe('Crucible', function () {
 
     // deploy instance
     vault = await createInstance('Crucible', factory, owner)
-  })
+  });
 
   describe('nft', function () {
     it('should succeed', async function () {

@@ -2,6 +2,8 @@ import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/dist/src/signer-wit
 import { expect } from 'chai'
 import { BigNumber, BigNumberish, Contract, Wallet } from 'ethers'
 import { ethers, network } from 'hardhat'
+import { revertAfter } from './shared-before-each/revert-after'
+import { sharedBeforeEach } from './shared-before-each/shared-before-each'
 import {
   createInstance,
   deployContract,
@@ -114,6 +116,8 @@ describe('Aludel', function () {
     return stakeDuration >= rewardScaling.time ? baseReward : minReward.add(bonusReward)
   }
 
+  revertAfter();
+
   before(async function () {
     // prepare signers
     accounts = await ethers.getSigners()
@@ -123,21 +127,23 @@ describe('Aludel', function () {
       to: user.address,
       value: (await accounts[2].getBalance()).mul(9).div(10),
     })
+
   })
 
-  beforeEach(async function () {
-    // deploy dependencies
+  sharedBeforeEach(async function () {
     powerSwitchFactory = await deployContract('PowerSwitchFactory')
     rewardPoolFactory = await deployContract('RewardPoolFactory')
     vaultTemplate = await deployContract('Crucible')
     vaultFactory = await deployContract('CrucibleFactory', [vaultTemplate.address])
-
+  
     // deploy mock tokens
     stakingToken = await deployContract('MockERC20', [admin.address, mockTokenSupply]);
-
+  
+    // unpack object
     ({ mist: rewardToken, initialSupply: amplInitialSupply } = await deployMist(admin))
+    
     bonusToken = await deployContract('MockERC20', [admin.address, mockTokenSupply])
-  })
+  });
 
   describe('initialize', function () {
     describe('when rewardScaling.floor > rewardScaling.ceiling', function () {
