@@ -11,6 +11,7 @@ import './tasks/mock'
 import './tasks/transmuter'
 import './tasks/wallet'
 import './tasks/stream'
+import './tasks/incentive'
 
 import { HardhatUserConfig } from 'hardhat/config'
 import { parseUnits } from 'ethers/lib/utils'
