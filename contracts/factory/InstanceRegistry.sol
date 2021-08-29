@@ -28,15 +28,15 @@ contract InstanceRegistry is IInstanceRegistry {
 
     /* view functions */
 
-    function isInstance(address instance) external view override returns (bool validity) {
+    function isInstance(address instance) public view override returns (bool validity) {
         return _instanceSet.contains(instance);
     }
 
-    function instanceCount() external view override returns (uint256 count) {
+    function instanceCount() public view override returns (uint256 count) {
         return _instanceSet.length();
     }
 
-    function instanceAt(uint256 index) external view override returns (address instance) {
+    function instanceAt(uint256 index) public view override returns (address instance) {
         return _instanceSet.at(index);
     }
 
