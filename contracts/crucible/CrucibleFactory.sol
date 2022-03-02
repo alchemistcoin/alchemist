@@ -2,6 +2,7 @@
 pragma solidity 0.7.6;
 
 import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
 import {IFactory} from "../factory/IFactory.sol";
 import {IInstanceRegistry} from "../factory/InstanceRegistry.sol";
@@ -10,10 +11,10 @@ import {ProxyFactory} from "../factory/ProxyFactory.sol";
 import {IUniversalVault} from "./Crucible.sol";
 
 /// @title CrucibleFactory
-contract CrucibleFactory is IFactory, IInstanceRegistry, ERC721 {
+contract CrucibleFactory is Ownable, IFactory, IInstanceRegistry, ERC721 {
     address private immutable _template;
 
-    constructor(address template) ERC721("Alchemist Crucible v1", "CRUCIBLE-V1") {
+    constructor(address template) ERC721("Alchemist Crucible v1", "CRUCIBLE-V1") Ownable() {
         require(template != address(0), "CrucibleFactory: invalid template");
         _template = template;
     }
