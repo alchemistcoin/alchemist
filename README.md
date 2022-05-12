@@ -45,14 +45,16 @@ Copper Fair Launch: https://copperlaunch.com/
 
 The Crucible NFT and Aludel LP reward contracts are forks of [Ampleforth](https://github.com/ampleforth)'s upcoming token geyser v2 and UniversalVault NFT contracts. This is a test in prod. _Use at your own risk._
 
+### Mainnet
+
 | Contract           | Address                                                                                                               | Description                                            |
 | ------------------ | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
 | Alchemist          | [alchemistcoin.eth](https://etherscan.io/address/alchemistcoin.eth)                                                   | ERC20 token                                            |
 | Crucible NFT       | [crucible.alchemistcoin.eth](https://etherscan.io/address/crucible.alchemistcoin.eth)                                 | crucible nft contract                                  |
-| Aludel v1          | [aludel.alchemistcoin.eth](https://etherscan.io/address/aludel.alchemistcoin.eth)                                     | ⚗️/WETH LP (Uniswap v2) reward program                 |
-| Aludel v1.5        | [0x93c31fc68E613f9A89114f10B38F9fd2EA5de6BC](https://etherscan.io/address/0x93c31fc68E613f9A89114f10B38F9fd2EA5de6BC) | ⚗️/WETH LP (Uniswap v2) reward program                 |
+| Aludel v1          | [aludel.alchemistcoin.eth](https://etherscan.io/address/aludel.alchemistcoin.eth)                                     | ⚗️/WETH LP (Uniswap v2) reward program                  |
+| Aludel v1.5        | [0x93c31fc68E613f9A89114f10B38F9fd2EA5de6BC](https://etherscan.io/address/0x93c31fc68E613f9A89114f10B38F9fd2EA5de6BC) | ⚗️/WETH LP (Uniswap v2) reward program                  |
 | Multisig           | [multisig.alchemistcoin.eth](https://etherscan.io/address/multisig.alchemistcoin.eth)                                 | community multisig                                     |
-| UniswapV2Pair      | [uniswap.alchemistcoin.eth](https://etherscan.io/address/uniswap.alchemistcoin.eth)                                   | [⚗️/WETH uniswap pair](https://lp.mist.alchemist.wtf/) |
+| UniswapV2Pair      | [uniswap.alchemistcoin.eth](https://etherscan.io/address/uniswap.alchemistcoin.eth)                                   | [⚗️/WETH uniswap pair](https://lp.mist.alchemist.wtf/)  |
 | TransmuterV1       | [transmuter.alchemistcoin.eth](https://etherscan.io/address/transmuter.alchemistcoin.eth)                             | router contract for batched transactions               |
 | StreamV1           | [0x979e2FdE487534be3f8a41cD57f11EF9E71cDC1A](https://etherscan.io/address/0x979e2FdE487534be3f8a41cD57f11EF9E71cDC1A) | inflation streaming                                    |
 | StreamV2           | [0xebf421c83069143f3bd29A5C690Df97CC261E49c](https://etherscan.io/address/0xebf421c83069143f3bd29A5C690Df97CC261E49c) | inflation streaming                                    |
@@ -62,6 +64,28 @@ The Crucible NFT and Aludel LP reward contracts are forks of [Ampleforth](https:
 | RewardPoolFactory  | [0xF016fa84D5f3a252409a63b5cb89B555A0d27Ccf](https://etherscan.io/address/0xF016fa84D5f3a252409a63b5cb89B555A0d27Ccf) | factory contract                                       |
 | mistX Tip Jar      | [mistx.eth](https://etherscan.io/address/mistx.eth)                                                                   | mistX tip jar                                          |
 | MistXRouter        | [0xA58f22e0766B3764376c92915BA545d583c19DBc](https://etherscan.io/address/0xA58f22e0766B3764376c92915BA545d583c19DBc) | mistX transaction router                               |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+
+### Polygon
+| Contract           | Address                                                                                                                 | Description                                          |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| Crucible NFT       | [0xE2dD7930d8cA478d9aA38Ae0F5483B8A3B331C40](https://polygonscan.com/address/0xE2dD7930d8cA478d9aA38Ae0F5483B8A3B331C40)| crucible nft contract                                |
+| RewardPoolFactory  | [0xf3D4b566ecEF776d44Aba803306480Ef634CB1Da](https://polygonscan.com/address/0xf3D4b566ecEF776d44Aba803306480Ef634CB1Da)| factory contract                                     |
+| PowerSwitchFactory | [0x1625b84D233dF4b131da7B49c2b540890aBA0E96](https://polygonscan.com/address/0x1625b84D233dF4b131da7B49c2b540890aBA0E96)| factory contract                                     |
+| Crucible template  | [0x5D35445Ae5b57bEF0235CadAd78292F8baBDba23](https://polygonscan.com/address/0x5D35445Ae5b57bEF0235CadAd78292F8baBDba23)| crucible template                                    |
+| Crucible pro minter| [0x8971dac20F6061fD487555242748061e7c34B42E](https://polygonscan.com/address/0x6ec19EF96C569ac1B6c4Fe7404c5a948a9bB7416)| crucible pro minter                                  |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+
+### Avalanche
+| Contract           | Address                                                                                                                 | Description                                          |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| Crucible NFT       | [0x6D07709A30fcE07901B2a6D8e1D6E6ac17eb96De](https://snowtrace.io/address/0x6D07709A30fcE07901B2a6D8e1D6E6ac17eb96De)   | crucible nft contract                                |
+| RewardPoolFactory  | [0x77d086FFB4e8E66288a73eAcF94bE603a0197dbb](https://snowtrace.io/address/0x77d086FFB4e8E66288a73eAcF94bE603a0197dbb)   | factory contract                                     |
+| PowerSwitchFactory | [0xF6c1210Aca158bBD453A12604A03AeD2659ac0ef](https://snowtrace.io/address/0xF6c1210Aca158bBD453A12604A03AeD2659ac0ef)   | factory contract                                     |
+| Crucible template  | [0x5D15d226303cB96AC2EA7f760a313eA6bB36C508](https://snowtrace.io/address/0x5D15d226303cB96AC2EA7f760a313eA6bB36C508)   | crucible template                                    |
+| Crucible pro minter| [0x6ec19EF96C569ac1B6c4Fe7404c5a948a9bB7416](https://snowtrace.io/address/0x6ec19EF96C569ac1B6c4Fe7404c5a948a9bB7416)   | crucible pro minter                                  |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+
 
 ## Check system status
 
