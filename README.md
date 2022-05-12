@@ -70,15 +70,17 @@ The Crucible NFT and Aludel LP reward contracts are forks of [Ampleforth](https:
 | Contract           | Address                                                                                                                 | Description                                          |
 | ------------------ | ----------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
 | Crucible NFT       | [0xE2dD7930d8cA478d9aA38Ae0F5483B8A3B331C40](https://polygonscan.com/address/0xE2dD7930d8cA478d9aA38Ae0F5483B8A3B331C40)| crucible nft contract                                |
+| TransmuterV1       | [0x4F91Ba2A5e6079f6fC929d062699e279bF85bBF7](https://polygonscan.com/address/0x4F91Ba2A5e6079f6fC929d062699e279bF85bBF7)| router contract for batched transactions             |
 | RewardPoolFactory  | [0xf3D4b566ecEF776d44Aba803306480Ef634CB1Da](https://polygonscan.com/address/0xf3D4b566ecEF776d44Aba803306480Ef634CB1Da)| factory contract                                     |
 | PowerSwitchFactory | [0x1625b84D233dF4b131da7B49c2b540890aBA0E96](https://polygonscan.com/address/0x1625b84D233dF4b131da7B49c2b540890aBA0E96)| factory contract                                     |
 | Crucible template  | [0x5D35445Ae5b57bEF0235CadAd78292F8baBDba23](https://polygonscan.com/address/0x5D35445Ae5b57bEF0235CadAd78292F8baBDba23)| crucible template                                    |
-| Crucible pro minter| [0x8971dac20F6061fD487555242748061e7c34B42E](https://polygonscan.com/address/0x6ec19EF96C569ac1B6c4Fe7404c5a948a9bB7416)| crucible pro minter                                  |
+| Crucible pro minter| [0x8971dac20F6061fD487555242748061e7c34B42E](https://polygonscan.com/address/0x8971dac20F6061fD487555242748061e7c34B42E)| crucible pro minter                                  |
 
 ### Avalanche
 | Contract           | Address                                                                                                                 | Description                                          |
 | ------------------ | ----------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
 | Crucible NFT       | [0x6D07709A30fcE07901B2a6D8e1D6E6ac17eb96De](https://snowtrace.io/address/0x6D07709A30fcE07901B2a6D8e1D6E6ac17eb96De)   | crucible nft contract                                |
+| TransmuterV1       | [0xF18f0485e1dBC7f1Cea8620ddbf16187A40E6520](https://snowtrace.io/address/0xF18f0485e1dBC7f1Cea8620ddbf16187A40E6520)   | router contract for batched transactions             |
 | RewardPoolFactory  | [0x77d086FFB4e8E66288a73eAcF94bE603a0197dbb](https://snowtrace.io/address/0x77d086FFB4e8E66288a73eAcF94bE603a0197dbb)   | factory contract                                     |
 | PowerSwitchFactory | [0xF6c1210Aca158bBD453A12604A03AeD2659ac0ef](https://snowtrace.io/address/0xF6c1210Aca158bBD453A12604A03AeD2659ac0ef)   | factory contract                                     |
 | Crucible template  | [0x5D15d226303cB96AC2EA7f760a313eA6bB36C508](https://snowtrace.io/address/0x5D15d226303cB96AC2EA7f760a313eA6bB36C508)   | crucible template                                    |
