@@ -64,7 +64,6 @@ The Crucible NFT and Aludel LP reward contracts are forks of [Ampleforth](https:
 | RewardPoolFactory  | [0xF016fa84D5f3a252409a63b5cb89B555A0d27Ccf](https://etherscan.io/address/0xF016fa84D5f3a252409a63b5cb89B555A0d27Ccf) | factory contract                                       |
 | mistX Tip Jar      | [mistx.eth](https://etherscan.io/address/mistx.eth)                                                                   | mistX tip jar                                          |
 | MistXRouter        | [0xA58f22e0766B3764376c92915BA545d583c19DBc](https://etherscan.io/address/0xA58f22e0766B3764376c92915BA545d583c19DBc) | mistX transaction router                               |
-| ------------------ | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
 
 ### Polygon
 | Contract           | Address                                                                                                                 | Description                                          |
@@ -74,7 +73,6 @@ The Crucible NFT and Aludel LP reward contracts are forks of [Ampleforth](https:
 | PowerSwitchFactory | [0x1625b84D233dF4b131da7B49c2b540890aBA0E96](https://polygonscan.com/address/0x1625b84D233dF4b131da7B49c2b540890aBA0E96)| factory contract                                     |
 | Crucible template  | [0x5D35445Ae5b57bEF0235CadAd78292F8baBDba23](https://polygonscan.com/address/0x5D35445Ae5b57bEF0235CadAd78292F8baBDba23)| crucible template                                    |
 | Crucible pro minter| [0x8971dac20F6061fD487555242748061e7c34B42E](https://polygonscan.com/address/0x6ec19EF96C569ac1B6c4Fe7404c5a948a9bB7416)| crucible pro minter                                  |
-| ------------------ | ----------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
 
 ### Avalanche
 | Contract           | Address                                                                                                                 | Description                                          |
@@ -84,7 +82,6 @@ The Crucible NFT and Aludel LP reward contracts are forks of [Ampleforth](https:
 | PowerSwitchFactory | [0xF6c1210Aca158bBD453A12604A03AeD2659ac0ef](https://snowtrace.io/address/0xF6c1210Aca158bBD453A12604A03AeD2659ac0ef)   | factory contract                                     |
 | Crucible template  | [0x5D15d226303cB96AC2EA7f760a313eA6bB36C508](https://snowtrace.io/address/0x5D15d226303cB96AC2EA7f760a313eA6bB36C508)   | crucible template                                    |
 | Crucible pro minter| [0x6ec19EF96C569ac1B6c4Fe7404c5a948a9bB7416](https://snowtrace.io/address/0x6ec19EF96C569ac1B6c4Fe7404c5a948a9bB7416)   | crucible pro minter                                  |
-| ------------------ | ----------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
 
 
 ## Check system status
