@@ -73,6 +73,24 @@ task('create-aludel', 'Create an Aludel instance and deposit funds')
   .addParam('owner', 'the admin of the system')
   .addFlag('verify', 'verify contracts on etherscan')
   .setAction(async (args, { ethers, run, network }) => {
+
+    // CLI Example - Polygon
+
+    // yarn hardhat create-aludel \
+    //       --staking-token 0x0000000000000000000000000000000000000000 \
+    //       --reward-token 0x0000000000000000000000000000000000000000 \
+    //       --reward-amount 0 \
+    //       --unlock-days 0 \
+    //       --scaling-floor 1 \
+    //       --scaling-ceiling 10 \
+    //       --scaling-days 40 \
+    //       --reward-pool-factory 0xf3D4b566ecEF776d44Aba803306480Ef634CB1Da \
+    //       --power-switch-factory 0x1625b84D233dF4b131da7B49c2b540890aBA0E96 \
+    //       --crucible-factory 0xE2dD7930d8cA478d9aA38Ae0F5483B8A3B331C40 \
+    //       --owner 0x0000000000000000000000000000000000000000 \
+    //       --network polygon \
+    //       --verify
+
     // log config
 
     console.log('Network')
@@ -84,12 +102,12 @@ task('create-aludel', 'Create an Aludel instance and deposit funds')
 
     await run('compile')
 
-    // get signer
+    // // get signer
 
     const signer = (await ethers.getSigners())[0]
     console.log('Signer')
     console.log('  at', signer.address)
-    console.log('  ETH', formatEther(await signer.getBalance()))
+    console.log('  balance', formatEther(await signer.getBalance()))
 
     // load contracts
 
@@ -103,13 +121,19 @@ task('create-aludel', 'Create an Aludel instance and deposit funds')
 
     console.log('Validate balances')
 
-    const rewardAmount = parseUnits(
-      args.rewardAmount,
-      await rewardToken.decimals(),
-    )
+    let rewardAmount;
+    // reward token balance check
+    if (Number(args.rewardAmount) > 0) {
+      rewardAmount = parseUnits(
+        args.rewardAmount,
+        await rewardToken.decimals(),
+      )
 
-    expect(await rewardToken.balanceOf(signer.address)).to.be.gte(rewardAmount)
-    expect(await signer.getBalance()).to.be.gte(parseEther('1'))
+      expect(await rewardToken.balanceOf(signer.address)).to.be.gte(rewardAmount)
+    }
+
+    // native token balance check
+    expect(await signer.getBalance()).to.be.gte(parseEther('0.5'))
 
     // deploy instance
 
@@ -132,23 +156,25 @@ task('create-aludel', 'Create an Aludel instance and deposit funds')
       aludelArgs,
     )
 
-    // fund aludel
+    if (Number(args.rewardAmount) > 0) {
+      // fund aludel
 
-    console.log('Approve reward deposit')
+      console.log('Approve reward deposit')
 
-    const approveTx = await rewardToken.approve(
-      aludel.address,
-      constants.MaxUint256,
-    )
-    await approveTx.wait()
+      const approveTx = await rewardToken.approve(
+        aludel.address,
+        constants.MaxUint256,
+      )
+      await approveTx.wait()
 
-    console.log('  in', approveTx.hash)
+      console.log('  in', approveTx.hash)
 
-    console.log('Deposit reward')
+      console.log('Deposit reward')
 
-    const depositTx = await aludel.fund(rewardAmount, args.unlockDays * DAY)
+      const depositTx = await aludel.fund(rewardAmount, args.unlockDays * DAY)
 
-    console.log('  in', depositTx.hash)
+      console.log('  in', depositTx.hash)
+    }
 
     // add crucible factory
 
@@ -159,26 +185,27 @@ task('create-aludel', 'Create an Aludel instance and deposit funds')
     console.log('  in', registerTx.hash)
 
     // transfer ownership
+    if (args.owner !== '', args.owner.toLowerCase() != signer.address.toLowerCase()) {
+      const powerSwitch = await ethers.getContractAt(
+        'PowerSwitch',
+        await aludel.getPowerSwitch(),
+        signer,
+      )
 
-    const powerSwitch = await ethers.getContractAt(
-      'PowerSwitch',
-      await aludel.getPowerSwitch(),
-      signer,
-    )
+      console.log('Transfer admin')
 
-    console.log('Transfer admin')
+      const transferAdminTx = await aludel.transferOwnership(args.owner)
 
-    const transferAdminTx = await aludel.transferOwnership(args.owner)
+      console.log('  to', await aludel.owner())
+      console.log('  in', transferAdminTx.hash)
 
-    console.log('  to', await aludel.owner())
-    console.log('  in', transferAdminTx.hash)
+      console.log('Transfer power controller')
 
-    console.log('Transfer power controller')
+      const transferPowerTx = await powerSwitch.transferOwnership(args.owner)
 
-    const transferPowerTx = await powerSwitch.transferOwnership(args.owner)
-
-    console.log('  to', await powerSwitch.owner())
-    console.log('  in', transferPowerTx.hash)
+      console.log('  to', await powerSwitch.owner())
+      console.log('  in', transferPowerTx.hash)
+    }
 
     // verify source
 
