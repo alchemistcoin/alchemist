@@ -36,10 +36,10 @@ u in ?
 Voting: https://cast.alchemist.wtf/  
 Discord: http://discord.alchemist.wtf/  
 FAQ: https://docs.alchemist.wtf/  
-GitHub: https://github.com/alchemistcoin/crucible-frontend  
-Crucible/Aludel Rewards: https://crucible.alchemist.wtf  
+GitHub: https://github.com/alchemistcoin  
+Crucible/Aludel Rewards: https://crucible.wtf  
 MistX FlashDEX: https://mistx.io/  
-Copper Fair Launch: https://copperlaunch.com/
+Copper Launch: https://copperlaunch.com/  
 
 ## Addresses
 
