@@ -90,6 +90,23 @@ task('create-aludel', 'Create an Aludel instance and deposit funds')
     //       --owner 0x0000000000000000000000000000000000000000 \
     //       --network polygon \
     //       --verify
+  
+    // CLI Example - Mainnet
+
+    // yarn hardhat create-aludel \
+    //       --staking-token 0x0000000000000000000000000000000000000000 \
+    //       --reward-token 0x0000000000000000000000000000000000000000 \
+    //       --reward-amount 0 \
+    //       --unlock-days 0 \
+    //       --scaling-floor 1 \
+    //       --scaling-ceiling 14 \
+    //       --scaling-days 7 \
+    //       --reward-pool-factory 0xF016fa84D5f3a252409a63b5cb89B555A0d27Ccf \
+    //       --power-switch-factory 0x89d2D92eaCE71977dD0b159062f8ec90EA64fc24 \
+    //       --crucible-factory 0x54e0395CFB4f39beF66DBCd5bD93Cca4E9273D56 \
+    //       --owner 0x0000000000000000000000000000000000000000 \
+    //       --network mainnet \
+    //       --verify
 
     // log config
 
