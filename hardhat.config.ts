@@ -14,7 +14,6 @@ import './tasks/stream'
 import './tasks/incentive'
 
 import { HardhatUserConfig } from 'hardhat/config'
-import { parseUnits } from 'ethers/lib/utils'
 
 require('dotenv').config()
 
@@ -40,6 +39,20 @@ export default {
     },
     mainnet: {
       url: 'https://mainnet.infura.io/v3/' + process.env.INFURA_ID,
+      accounts: {
+        mnemonic,
+      },
+    },
+    avalanche: {
+      url:
+        'https://api.avax.network/ext/bc/C/rpc',
+      accounts: {
+        mnemonic,
+      },
+    },
+    polygon: {
+      url:
+        'https://polygon-mainnet.infura.io/v3/' + process.env.INFURA_ID,
       accounts: {
         mnemonic,
       },
